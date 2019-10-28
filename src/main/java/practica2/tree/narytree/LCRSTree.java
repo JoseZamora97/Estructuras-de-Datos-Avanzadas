@@ -15,19 +15,90 @@ public class LCRSTree<E> implements NAryTree<E> {
 
     //TODO: Practica 2 Ejercicio 2
 
+    public static class LCRSNode<T> implements Position<T> {
+
+        LCRSNode<T> parent;
+        LCRSNode<T> firstChild;
+        LCRSNode<T> sibling;
+
+        LCRSTree<T> myTree;
+
+        T element;
+
+        public LCRSNode(LCRSNode<T> parent, LCRSNode<T> firstChild, LCRSNode<T> sibling, LCRSTree<T> myTree, T element) {
+            this.parent = parent;
+            this.firstChild = firstChild;
+            this.sibling = sibling;
+            this.myTree = myTree;
+            this.element = element;
+        }
+
+        public LCRSNode<T> getParent() {
+            return parent;
+        }
+
+        public void setParent(LCRSNode<T> parent) {
+            this.parent = parent;
+        }
+
+        public LCRSNode<T> getFirstChild() {
+            return firstChild;
+        }
+
+        public void setFirstChild(LCRSNode<T> firstChild) {
+            this.firstChild = firstChild;
+        }
+
+        public LCRSNode<T> getSibling() {
+            return sibling;
+        }
+
+        public void setSibling(LCRSNode<T> sibling) {
+            this.sibling = sibling;
+        }
+
+        public LCRSTree<T> getMyTree() {
+            return myTree;
+        }
+
+        public void setMyTree(LCRSTree<T> myTree) {
+            this.myTree = myTree;
+        }
+
+        public void setElement(T element) {
+            this.element = element;
+        }
+
+        @Override
+        public T getElement() {
+            return this.element;
+        }
+    }
+
+    private int size;
+    private LCRSNode<E> root;
+
+    public LCRSTree () {
+        this.root = null;
+        this.size = 0;
+    }
+
     @Override
     public int size() {
-        throw new RuntimeException("Not yet implemented");
+        return this.size;
     }
 
     @Override
     public boolean isEmpty() {
-        throw new RuntimeException("Not yet implemented");
+        return size == 0;
     }
 
     @Override
     public Position<E> root() throws RuntimeException {
-        throw new RuntimeException("Not yet implemented");
+        if(root == null)
+            throw new RuntimeException("The tree is empty");
+
+        return root;
     }
 
     @Override

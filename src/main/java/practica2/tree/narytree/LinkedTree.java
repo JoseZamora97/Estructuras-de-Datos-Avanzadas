@@ -14,7 +14,7 @@ public class LinkedTree<E> implements NAryTree<E> {
      *
      * @param <T> the type of the elements stored in a node
      */
-    private class TreeNode<T> implements Position<T> {
+    private static class TreeNode<T> implements Position<T> {
 
         private T element; // The element stored in the position
         private TreeNode<T> parent; // The parent of the node
@@ -242,10 +242,44 @@ public class LinkedTree<E> implements NAryTree<E> {
         return new BFSIterator<>(this);
     }
 
-    // TODO: Práctica 2 Ejercicio 1.
+    /**
+     * Respuesta a la pregunta 1 practica 2.
+     * @param pOrig position of the origin node
+     * @param pDest position of the destination node
+     * @throws RuntimeException
+     */
     @Override
     public void moveSubtree(Position<E> pOrig, Position<E> pDest) throws RuntimeException {
-        throw new RuntimeException("Not implemented");
+
+        TreeNode<E> src = checkPosition(pOrig);
+        TreeNode<E> dest = checkPosition(pDest);
+
+        if(isRoot(pOrig))
+            throw new RuntimeException("Tree's root cant be moved.");
+        if(pOrig.equals(pDest))
+            throw new RuntimeException("Both nodes are the same");
+        if(contains(src, pDest))
+            throw new RuntimeException("Destination belongs to some Origins subtrees");
+
+        // Remuevo del padre al hijo de la lista de hijos.
+        src.parent.getChildren().remove(src);
+        // Añado al nodo destino al nuevo nodo.
+        dest.getChildren().add(src);
     }
 
+    /**
+     *
+     * @param node Nodo cabeza desde donde se empieza a buscar.
+     * @param element elemento que se busca.
+     * @return true si se encuentra en uno de sus subarboles.
+     */
+    private boolean contains(TreeNode<E> node, Position<E> element) {
+        BFSIterator<E> iterator = new BFSIterator<>(this, node);
+        while(iterator.hasNext())
+            if(iterator.next() == element)
+                // Lo ha encontrado.
+                return true;
+        // si llega aqui es que no se encuentra.
+        return false;
+    }
 }
