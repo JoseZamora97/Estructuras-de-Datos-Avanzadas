@@ -256,30 +256,16 @@ public class LinkedTree<E> implements NAryTree<E> {
 
         if(isRoot(pOrig))
             throw new RuntimeException("Tree's root cant be moved.");
-        if(pOrig.equals(pDest))
+        if(pOrig == pDest)
             throw new RuntimeException("Both nodes are the same");
-        if(contains(src, pDest))
-            throw new RuntimeException("Destination belongs to some Origins subtrees");
 
-        // Remuevo del padre al hijo de la lista de hijos.
-        src.parent.getChildren().remove(src);
-        // Añado al nodo destino al nuevo nodo.
+        BFSIterator<E> iterator = new BFSIterator<>(this, src);
+        while(iterator.hasNext()) {
+            if (iterator.next() == pDest)
+                throw new RuntimeException("Destination belongs to some Origins subtrees");
+        }
+
+        src.getParent().getChildren().remove(src);
         dest.getChildren().add(src);
-    }
-
-    /**
-     *
-     * @param node Nodo cabeza desde donde se empieza a buscar.
-     * @param element elemento que se busca.
-     * @return true si se encuentra en uno de sus subarboles.
-     */
-    private boolean contains(TreeNode<E> node, Position<E> element) {
-        BFSIterator<E> iterator = new BFSIterator<>(this, node);
-        while(iterator.hasNext())
-            if(iterator.next() == element)
-                // Lo ha encontrado.
-                return true;
-        // si llega aqui es que no se encuentra.
-        return false;
     }
 }

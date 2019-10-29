@@ -1,12 +1,10 @@
 package practica2.tree.narytree;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javafx.geometry.Pos;
 import practica2.Position;
 import practica2.iterators.BFSIterator;
 
@@ -20,7 +18,7 @@ public class LCRSTree<E> implements NAryTree<E> {
 
     //TODO: Practica 2 Ejercicio 2
 
-    public static class LCRSNode<T> implements Position<T> {
+    private static class LCRSNode<T> implements Position<T> {
 
         LCRSNode<T> parent;
         LCRSNode<T> firstChild;
@@ -123,7 +121,7 @@ public class LCRSTree<E> implements NAryTree<E> {
         LCRSNode<E> node  = checkPosition(v);
         Position<E> parentPos = node.getParent();
         if(parentPos == null)
-            throw new RuntimeException("The node doesnt have parent");
+            throw new RuntimeException("The node does not have parent");
 
         return parentPos;
     }
@@ -196,17 +194,7 @@ public class LCRSTree<E> implements NAryTree<E> {
         LCRSNode<E> parent = checkPosition(p);
         LCRSNode<E> newChild = new LCRSNode<>(parent, null, null, this, element);
 
-        LCRSNode<E> aChild = parent.getFirstChild();
-
-        if (aChild == null)
-            parent.setFirstChild(newChild);
-
-        else {
-            while(aChild.getSibling() != null)
-                aChild = aChild.getSibling();
-
-            aChild.setSibling(newChild);
-        }
+        addSubtree(newChild, parent);
 
         size += 1;
 
@@ -215,11 +203,83 @@ public class LCRSTree<E> implements NAryTree<E> {
 
     @Override
     public void remove(Position<E> p) {
-        throw new RuntimeException("Not yet implemented");
+        LCRSNode<E> node = checkPosition(p);
+
+        if (node.getParent() == null) {
+            this.root = null;
+            this.size = 0;
+        }
+        else {
+            Iterator<Position<E>> it = new BFSIterator<>(this, p);
+            int cont = 0;
+            while (it.hasNext()) {
+                LCRSNode<E> next = checkPosition(it.next());
+                next.setMyTree(null);
+                cont++;
+            }
+            size = size - cont;
+            delete(node);
+        }
+
+        node.setMyTree(null);
     }
 
     @Override
     public void moveSubtree(Position<E> pOrig, Position<E> pDest) throws RuntimeException {
-        throw new RuntimeException("Not yet implemented");
+        LCRSNode<E> src, dst;
+
+        src = checkPosition(pOrig);
+        dst = checkPosition(pDest);
+
+        if(isRoot(pOrig))
+            throw new RuntimeException("Tree's root cant be moved.");
+        if(pOrig == pDest)
+            throw new RuntimeException("Both nodes are the same");
+
+        BFSIterator<E> iterator = new BFSIterator<>(this, src);
+        while(iterator.hasNext()) {
+            if (iterator.next() == pDest)
+                throw new RuntimeException("Destination belongs to some Origins subtrees");
+        }
+
+        delete(src);
+        addSubtree(src, dst);
+    }
+
+    private void addSubtree(LCRSNode<E> subNode, LCRSNode<E> destination) {
+        LCRSNode<E> aChild = destination.getFirstChild();
+
+        if (aChild == null)
+            destination.setFirstChild(subNode);
+
+        else {
+            while(aChild.getSibling() != null)
+                aChild = aChild.getSibling();
+
+            aChild.setSibling(subNode);
+        }
+    }
+
+    private void delete(LCRSNode<E> node) {
+        if (node == null)
+            throw new IllegalStateException("Node is null");
+
+        LCRSNode<E> aux = node.getParent().getFirstChild();
+
+        if(aux == node)
+            aux.getParent().setFirstChild(node.getSibling());
+
+        else {
+            int cont = 0;
+            while(aux != node){
+                aux = aux.getSibling();
+                cont++;
+            }
+
+            for (int i=0; i < cont; i++)
+                aux = aux.getSibling();
+
+            aux.setSibling(node.getSibling());
+        }
     }
 }
