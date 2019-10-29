@@ -93,7 +93,8 @@ public class PreorderIteratorTest {
         int[] expected = {5, 6, 9, 10, 11, 8, 4};
         int element, i=0;
         while(iterator.hasNext()){
-            element = iterator.next().getElement();
+            Position<Integer> next = iterator.next();
+            element = next.getElement();
             assertEquals(expected[i], element);
             i++;
         }

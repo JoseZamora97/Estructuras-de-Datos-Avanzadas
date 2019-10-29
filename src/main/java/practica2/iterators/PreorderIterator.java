@@ -40,6 +40,7 @@ public class PreorderIterator<E> implements Iterator<Position<E>> {
 
     @Override
     public Position<E> next() {
+
         Position<E> aux = nodeStack.pop();
         Deque<Position<E>> children = new  ConcurrentLinkedDeque<>();
 
