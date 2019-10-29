@@ -1,9 +1,14 @@
 package practica2.tree.narytree;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
+import javafx.geometry.Pos;
 import practica2.Position;
+import practica2.iterators.BFSIterator;
 
 /**
  * A linked class for a tree where nodes have an arbitrary number of children.
@@ -78,6 +83,18 @@ public class LCRSTree<E> implements NAryTree<E> {
     private int size;
     private LCRSNode<E> root;
 
+    private LCRSNode<E> checkPosition(Position<E> p) {
+        if(!(p instanceof LCRSNode))
+            throw new IllegalStateException("The position is invalid");
+
+        LCRSNode<E> aux = (LCRSNode<E>) p;
+
+        if(aux.getMyTree() != this)
+            throw new IllegalStateException("The node is not from this tree");
+
+        return aux;
+    }
+
     public LCRSTree () {
         this.root = null;
         this.size = 0;
@@ -103,52 +120,97 @@ public class LCRSTree<E> implements NAryTree<E> {
 
     @Override
     public Position<E> parent(Position<E> v) throws RuntimeException {
-        throw new RuntimeException("Not yet implemented");
+        LCRSNode<E> node  = checkPosition(v);
+        Position<E> parentPos = node.getParent();
+        if(parentPos == null)
+            throw new RuntimeException("The node doesnt have parent");
+
+        return parentPos;
     }
 
     @Override
     public Iterable<? extends Position<E>> children(Position<E> v) {
-        throw new RuntimeException("Not yet implemented");
+
+        List<Position<E>> listChildren = new LinkedList<>();
+        LCRSNode<E> aChild = checkPosition(v).getFirstChild();
+
+        while(aChild != null) {
+            listChildren.add(aChild);
+            aChild = aChild.getSibling();
+        }
+
+        return listChildren;
     }
 
     @Override
     public boolean isInternal(Position<E> v) {
-        throw new RuntimeException("Not yet implemented");
+        return !isLeaf(v);
     }
 
     @Override
     public boolean isLeaf(Position<E> v) throws RuntimeException {
-        throw new RuntimeException("Not yet implemented");
+        LCRSNode<E> node = checkPosition(v);
+        return node.getFirstChild() == null ;
     }
 
     @Override
     public boolean isRoot(Position<E> v) {
-        throw new RuntimeException("Not yet implemented");
+        return this.root == checkPosition(v);
     }
 
     @Override
     public Position<E> addRoot(E e) throws RuntimeException {
-        throw new RuntimeException("Not yet implemented");
+        if(!isEmpty())
+            throw new IllegalStateException("Tree already has a root");
+
+        this.size=1;
+        this.root = new LCRSNode<>(null, null, null, this, e);
+        return this.root;
     }
 
     @Override
     public Iterator<Position<E>> iterator() {
-        throw new RuntimeException("Not yet implemented");
+        return new BFSIterator<>(this);
     }
 
     @Override
     public E replace(Position<E> p, E e) {
-        throw new RuntimeException("Not yet implemented");
+        LCRSNode<E> node = checkPosition(p);
+        E tmp = p.getElement();
+        node.setElement(e);
+
+        return tmp;
     }
 
     @Override
     public void swapElements(Position<E> p1, Position<E> p2) {
-        throw new RuntimeException("Not yet implemented");
+        LCRSNode<E> node1 = checkPosition(p1);
+        LCRSNode<E> node2 = checkPosition(p2);
+        E temp = p2.getElement();
+        node2.setElement(p1.getElement());
+        node1.setElement(temp);
     }
 
     @Override
     public Position<E> add(E element, Position<E> p) {
-        throw new RuntimeException("Not yet implemented");
+        LCRSNode<E> parent = checkPosition(p);
+        LCRSNode<E> newChild = new LCRSNode<>(parent, null, null, this, element);
+
+        LCRSNode<E> aChild = parent.getFirstChild();
+
+        if (aChild == null)
+            parent.setFirstChild(newChild);
+
+        else {
+            while(aChild.getSibling() != null)
+                aChild = aChild.getSibling();
+
+            aChild.setSibling(newChild);
+        }
+
+        size += 1;
+
+        return newChild;
     }
 
     @Override
