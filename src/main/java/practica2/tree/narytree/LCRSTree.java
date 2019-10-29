@@ -16,8 +16,6 @@ import practica2.iterators.BFSIterator;
  */
 public class LCRSTree<E> implements NAryTree<E> {
 
-    //TODO: Practica 2 Ejercicio 2
-
     private static class LCRSNode<T> implements Position<T> {
 
         LCRSNode<T> parent;
@@ -121,7 +119,7 @@ public class LCRSTree<E> implements NAryTree<E> {
         LCRSNode<E> node  = checkPosition(v);
         Position<E> parentPos = node.getParent();
         if(parentPos == null)
-            throw new RuntimeException("The node does not have parent");
+            throw new RuntimeException("The node has not parent");
 
         return parentPos;
     }
@@ -232,14 +230,14 @@ public class LCRSTree<E> implements NAryTree<E> {
         dst = checkPosition(pDest);
 
         if(isRoot(pOrig))
-            throw new RuntimeException("Tree's root cant be moved.");
+            throw new RuntimeException("Root node can't be moved");
         if(pOrig == pDest)
-            throw new RuntimeException("Both nodes are the same");
+            throw new RuntimeException("Both positions are the same");
 
         BFSIterator<E> iterator = new BFSIterator<>(this, src);
         while(iterator.hasNext()) {
             if (iterator.next() == pDest)
-                throw new RuntimeException("Destination belongs to some Origins subtrees");
+                throw new RuntimeException("Target position can't be a sub tree of origin");
         }
 
         delete(src);
@@ -247,8 +245,10 @@ public class LCRSTree<E> implements NAryTree<E> {
     }
 
     private void addSubtree(LCRSNode<E> subNode, LCRSNode<E> destination) {
-        LCRSNode<E> aChild = destination.getFirstChild();
 
+        subNode.setParent(destination);
+
+        LCRSNode<E> aChild = destination.getFirstChild();
         if (aChild == null)
             destination.setFirstChild(subNode);
 
@@ -261,25 +261,27 @@ public class LCRSTree<E> implements NAryTree<E> {
     }
 
     private void delete(LCRSNode<E> node) {
-        if (node == null)
-            throw new IllegalStateException("Node is null");
 
-        LCRSNode<E> aux = node.getParent().getFirstChild();
+        LCRSNode<E> i = node.getParent().getFirstChild();
+        LCRSNode<E> j = node.getParent().getFirstChild();
 
-        if(aux == node)
-            aux.getParent().setFirstChild(node.getSibling());
+        if(i == node)
+            i.getParent().setFirstChild(node.getSibling());
 
         else {
             int cont = 0;
-            while(aux != node){
-                aux = aux.getSibling();
+
+            while(i.getSibling() != node){
+                i = i.getSibling();
                 cont++;
             }
 
-            for (int i=0; i < cont; i++)
-                aux = aux.getSibling();
+            for (int k=0; k < cont; k++)
+                j = j.getSibling();
 
-            aux.setSibling(node.getSibling());
+            j.setSibling(node.getSibling());
         }
+
+        node.setParent(null);
     }
 }

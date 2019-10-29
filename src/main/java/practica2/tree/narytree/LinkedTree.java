@@ -255,17 +255,18 @@ public class LinkedTree<E> implements NAryTree<E> {
         TreeNode<E> dest = checkPosition(pDest);
 
         if(isRoot(pOrig))
-            throw new RuntimeException("Tree's root cant be moved.");
+            throw new RuntimeException("Root node can't be moved");
         if(pOrig == pDest)
-            throw new RuntimeException("Both nodes are the same");
+            throw new RuntimeException("Both positions are the same");
 
         BFSIterator<E> iterator = new BFSIterator<>(this, src);
         while(iterator.hasNext()) {
             if (iterator.next() == pDest)
-                throw new RuntimeException("Destination belongs to some Origins subtrees");
+                throw new RuntimeException("Target position can't be a sub tree of origin");
         }
 
         src.getParent().getChildren().remove(src);
         dest.getChildren().add(src);
+        src.setParent(dest);
     }
 }
