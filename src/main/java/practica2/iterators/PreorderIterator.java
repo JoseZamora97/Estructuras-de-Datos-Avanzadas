@@ -1,6 +1,7 @@
 package practica2.iterators;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Predicate;
 
 import practica2.Position;
@@ -13,7 +14,7 @@ public class PreorderIterator<E> implements Iterator<Position<E>> {
     private Predicate<Position<E>> predicate;
 
     public PreorderIterator(Tree<E> tree) {
-        this.nodeStack = new LinkedList<>();
+        this.nodeStack = new ConcurrentLinkedDeque<>();
         this.tree = tree;
         predicate = a -> true;
         if(!tree.isEmpty())
@@ -21,7 +22,7 @@ public class PreorderIterator<E> implements Iterator<Position<E>> {
     }
 
     public PreorderIterator(Tree<E> tree, Position<E> start) {
-        this.nodeStack = new LinkedList<>();
+        this.nodeStack = new  ConcurrentLinkedDeque<>();
         this.tree = tree;
         this.nodeStack.add(start);
         predicate = a -> true;
@@ -40,7 +41,7 @@ public class PreorderIterator<E> implements Iterator<Position<E>> {
     @Override
     public Position<E> next() {
         Position<E> aux = nodeStack.pop();
-        Deque<Position<E>> children = new LinkedList<>();
+        Deque<Position<E>> children = new  ConcurrentLinkedDeque<>();
 
         for(Position<E> node : tree.children(aux))
             children.push(node);
