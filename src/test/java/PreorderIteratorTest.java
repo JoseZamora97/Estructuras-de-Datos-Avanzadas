@@ -1,6 +1,3 @@
-package test;
-
-
 import practica2.Position;
 import practica2.iterators.PreorderIterator;
 import practica2.tree.narytree.LinkedTree;

@@ -1,18 +1,16 @@
-package test;
-
 import practica2.Position;
-import practica2.tree.narytree.LCRSTree;
+import practica2.tree.narytree.LinkedTree;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LCRSTreeTest {
+class LinkedTreeTest {
 
-    private LCRSTree<Integer> tree;
+    private LinkedTree<Integer> tree;
     private Position<Integer>[] pos;
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        tree = new LCRSTree<>();
+        tree = new LinkedTree<>();
         pos = new Position[12];
         pos[0]  = tree.addRoot(0);
         pos[1]  = tree.add(1,  pos[0]);
