@@ -62,14 +62,6 @@ public class VirtualFileSystem {
         }
     }
 
-    /**
-     * Función que simula el metodo nativo de los objetos tipo
-     * File [ file.isHidden() ]. De forma que, considero ocultos
-     * todos aquellos ficheros que comiencen por un "."
-     * Como en los sistemas de tipo Unix.
-     * @param f fichero
-     * @return true si el fichero esta oculto.
-     */
     private boolean isHidden(File f) {
         return f.getName().indexOf(".") == 0;
     }
@@ -143,19 +135,6 @@ public class VirtualFileSystem {
                 .getFile().getName().contains(substring);
 
         return filter(predicate, idStartFile, false);
-/*
-        List<String> iterable = new ArrayList<>();
-
-        PreorderIterator<VirtualFile> it =
-                new PreorderIterator<>(fileTree, fileList.get(idStartFile), predicate);
-
-        while(it.hasNext()) {
-            Position<VirtualFile> position = it.next();
-            if(position != null)
-                iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
-        }
-
-        return iterable; */
     }
 
     public Iterable<String> findBySize(int idStartFile, long minSize, long maxSize) {
@@ -169,19 +148,6 @@ public class VirtualFileSystem {
                         >= minSize && vf.getElement().length() <= maxSize;
 
         return filter(predicate, idStartFile, true);
-    /**
-        List<String> iterable = new ArrayList<>();
-
-        PreorderIterator<VirtualFile> it =
-                new PreorderIterator<>(fileTree, fileList.get(idStartFile), predicate);
-
-        while(it.hasNext()) {
-            Position<VirtualFile> position = it.next();
-            if(position != null && !position.getElement().getFile().isDirectory())
-                iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
-        }
-
-        return iterable;*/
     }
 
     private Iterable<String> filter(Predicate<Position<VirtualFile>> predicate, int id, boolean onlyFiles) {
