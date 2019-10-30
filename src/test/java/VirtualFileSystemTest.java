@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class VirtualFileSystemTest {
 
     private final String INVALID_ID_MESSAGE = "Invalid ID.";
-    private String path = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz";
-    private String path2 = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz/SubdirectorioA";
+    private String path = "src/main/resources/practica2/DirectorioRaiz";
+    private String path2 = "src/main/resources/practica2/DirectorioRaiz/SubdirectorioA";
     private VirtualFileSystem vfs;
 
     @BeforeEach
