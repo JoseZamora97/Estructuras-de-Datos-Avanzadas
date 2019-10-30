@@ -233,7 +233,7 @@ public class LinkedTree<E> implements NAryTree<E> {
             throw new IllegalStateException("Tree already has a root");
         }
         size = 1;
-        root = new TreeNode<E>(this, e, null, new ArrayList<TreeNode<E>>());
+        root = new TreeNode<>(this, e, null, new ArrayList<>());
         return root;
     }
 

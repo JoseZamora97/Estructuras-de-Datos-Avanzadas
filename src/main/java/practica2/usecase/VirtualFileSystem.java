@@ -1,10 +1,18 @@
 package practica2.usecase;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import practica2.Position;
+import practica2.iterators.BFSIterator;
+import practica2.iterators.PreorderIterator;
 import practica2.tree.narytree.LinkedTree;
 
 public class VirtualFileSystem {
@@ -92,29 +100,104 @@ public class VirtualFileSystem {
         return output.toString();
     }
 
-
     public void moveFileById(int idFile, int idTargetFolder) {
-        throw new RuntimeException("Not yet implemented");
+        checkId(idFile);
+
+        if(!fileList.get(idTargetFolder).getElement().getFile().isDirectory())
+            throw new RuntimeException("Target can't be a file.");
+
+        BFSIterator<VirtualFile> it = new BFSIterator<>(fileTree, fileList.get(idFile));
+        while(it.hasNext()) {
+            if (it.next() == fileList.get(idTargetFolder))
+                throw new RuntimeException("A file can't be a subdirectory of itself.");
+        }
+
+        fileTree.moveSubtree(fileList.get(idFile), fileList.get(idTargetFolder));
+
+        // TODO: continuar
     }
 
     public void removeFileById(int idFile) {
-        throw new RuntimeException("Not yet implemented");
+        checkId(idFile);
+
+        Position<VirtualFile> pvf = fileList.remove(idFile);
+
+        PreorderIterator<VirtualFile> it =
+                new PreorderIterator<>(fileTree, pvf);
+
+        while(it.hasNext())
+            fileList.remove(it.next());
+
+        fileTree.remove(pvf);
+    }
+
+    private void checkId(int idFile) {
+        if(idFile >= fileList.size())
+            throw new RuntimeException("Invalid ID.");
     }
 
     public Iterable<String> findBySubstring(int idStartFile, String substring) {
-        throw new RuntimeException("Not yet implemented");
+        checkId(idStartFile);
+
+        Predicate<Position<VirtualFile>> predicate = vf -> vf.getElement()
+                .getFile().getName().contains(substring);
+
+        return filter(predicate, idStartFile);
     }
 
     public Iterable<String> findBySize(int idStartFile, long minSize, long maxSize) {
-        throw new RuntimeException("Not yet implemented");
+        checkId(idStartFile);
+
+        if (maxSize<minSize)
+            throw new RuntimeException("Invalid range.");
+
+        Predicate<Position<VirtualFile>> predicate =
+                vf -> vf.getElement().length()
+                        >= minSize && vf.getElement().length() <= maxSize;
+
+        return filter(predicate, idStartFile);
+    }
+
+    private Iterable<String> filter(Predicate<Position<VirtualFile>> predicate, int id) {
+
+        List<String> iterable = new ArrayList<>();
+
+        PreorderIterator<VirtualFile> it =
+                new PreorderIterator<>(fileTree, fileList.get(id), predicate);
+
+        while(it.hasNext()) {
+            Position<VirtualFile> position = it.next();
+            if(position != null && !position.getElement().getFile().isDirectory())
+                iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
+        }
+
+        return iterable;
     }
 
     public String getFileVirtualPath(int idFile) {
-        throw new RuntimeException("Not yet implemented");
+        checkId(idFile);
+
+        Deque<String> stackFiles = new LinkedList<>();
+        Position<VirtualFile> pvf = fileList.get(idFile);
+
+        while(pvf != fileTree.root()) {
+            stackFiles.push(pvf.getElement().getName());
+            pvf = fileTree.parent(pvf);
+        }
+
+        StringBuilder output = new StringBuilder("vfs:/" + fileTree.root()
+                .getElement().getName());
+
+        for (String f : stackFiles)
+            output.append("/").append(f);
+
+        return output.toString();
     }
 
     public String getFilePath(int idFile) {
-        throw new RuntimeException("Not yet implemented");
+        checkId(idFile);
+        return fileList.get(idFile).getElement().getFile().getAbsolutePath()
+                .replace("\\", "/");
     }
 
 

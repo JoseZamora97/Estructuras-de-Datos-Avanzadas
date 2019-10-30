@@ -30,19 +30,22 @@ public class PreorderIterator<E> implements Iterator<Position<E>> {
     }
 
     public PreorderIterator(Tree<E> tree, Position<E> start, Predicate<Position<E>> predicate) {
-        this(tree, start);
+        this.nodeStack = new  LinkedList<>();
+        this.tree = tree;
+        this.nodeStack.add(start);
         this.predicate = predicate;
     }
 
     @Override
     public boolean hasNext() {
-        return (nodeStack.size() != 0);
+        return !nodeStack.isEmpty();
     }
 
     @Override
     public Position<E> next() {
 
         Position<E> aux = nodeStack.pop();
+
         Deque<Position<E>> children = new LinkedList<>();
 
         for(Position<E> node : tree.children(aux))
@@ -52,7 +55,10 @@ public class PreorderIterator<E> implements Iterator<Position<E>> {
             nodeStack.push(node);
 
         if(!predicate.test(aux))
-            aux = next();
+            if(hasNext())
+                aux = next();
+            else
+                return null;
 
         return aux;
     }

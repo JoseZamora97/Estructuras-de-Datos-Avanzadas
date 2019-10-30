@@ -48,7 +48,6 @@ public class VirtualFileSystemTest {
         assertEquals(expected, output);
     }
 
-
     @Test
     void moveFileById() {
         vfs.moveFileById(7,1);
@@ -101,8 +100,6 @@ public class VirtualFileSystemTest {
         assertEquals(expected, output);
 
     }
-
-
 
     @Test
     void moveFileById_Exceptions(){
@@ -247,16 +244,16 @@ public class VirtualFileSystemTest {
     void getFilePath() {
         String output, expected;
         output = vfs.getFilePath(0);
-        expected = "./Resources/practica2/DirectorioRaiz";
+        expected = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz";
         assertEquals(expected, output);
 
         output = vfs.getFilePath(3);
-        expected = "./Resources/practica2/DirectorioRaiz/SubdirectorioA/ArchivoB.ext";
+        expected = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz/SubdirectorioA/ArchivoB.ext";
         assertEquals(expected, output);
 
         vfs.loadFileSystem(path2);
         output = vfs.getFilePath(0);
-        expected = "./Resources/practica2/DirectorioRaiz/SubdirectorioA";
+        expected = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz/SubdirectorioA";
         assertEquals(expected, output);
 
     }

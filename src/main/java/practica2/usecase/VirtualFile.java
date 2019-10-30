@@ -29,4 +29,12 @@ public class VirtualFile {
     public void setLevel(int level) {
         this.level = level;
     }
+
+    public String getName() {
+        return this.file.getName();
+    }
+
+    public long length() {
+        return this.file.length();
+    }
 }
