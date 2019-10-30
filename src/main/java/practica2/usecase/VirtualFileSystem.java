@@ -142,7 +142,7 @@ public class VirtualFileSystem {
         Predicate<Position<VirtualFile>> predicate = vf -> vf.getElement()
                 .getFile().getName().contains(substring);
 
-        return filter(predicate, idStartFile);
+        return filter(predicate, idStartFile, false);
     }
 
     public Iterable<String> findBySize(int idStartFile, long minSize, long maxSize) {
@@ -155,10 +155,11 @@ public class VirtualFileSystem {
                 vf -> vf.getElement().length()
                         >= minSize && vf.getElement().length() <= maxSize;
 
-        return filter(predicate, idStartFile);
+        return filter(predicate, idStartFile, true);
     }
 
-    private Iterable<String> filter(Predicate<Position<VirtualFile>> predicate, int id) {
+    private Iterable<String> filter(Predicate<Position<VirtualFile>> predicate, int id
+            , boolean onlyFiles) {
 
         List<String> iterable = new ArrayList<>();
 
