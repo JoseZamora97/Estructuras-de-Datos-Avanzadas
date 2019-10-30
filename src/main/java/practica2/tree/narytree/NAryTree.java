@@ -1,7 +1,7 @@
 package practica2.tree.narytree;
 
 import practica2.Position;
-import practica2.tree.Tree;
+import practica2.Tree;
 
 public interface NAryTree<E> extends Tree<E> {
     /**

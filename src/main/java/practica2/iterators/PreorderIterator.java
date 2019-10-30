@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.function.Predicate;
 
 import practica2.Position;
-import practica2.tree.Tree;
+import practica2.Tree;
 
 public class PreorderIterator<E> implements Iterator<Position<E>> {
 

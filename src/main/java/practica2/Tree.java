@@ -1,4 +1,4 @@
-package practica2.tree;
+package practica2;
 
 import practica2.Position;
 

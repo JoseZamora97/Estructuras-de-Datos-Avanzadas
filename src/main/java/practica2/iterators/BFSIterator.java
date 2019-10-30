@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Queue;
 
 import practica2.Position;
-import practica2.tree.Tree;
+import practica2.Tree;
 
 public class BFSIterator<E> implements Iterator<Position<E>> {
 
