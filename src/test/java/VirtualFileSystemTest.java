@@ -66,6 +66,7 @@ public class VirtualFileSystemTest {
                 "10 \t\t\t\tArchivoD.ext\n";
         assertEquals(expected,output);
 
+        /*TODO: pase estos test debugear*/
 
         vfs.moveFileById(8,4);
         output = vfs.getFileSystem();
@@ -98,7 +99,6 @@ public class VirtualFileSystemTest {
                 "9 \t\t\t\t\tSubdirectorioF\n" +
                 "10 \t\t\t\t\t\tArchivoD.ext\n";
         assertEquals(expected, output);
-
     }
 
     @Test

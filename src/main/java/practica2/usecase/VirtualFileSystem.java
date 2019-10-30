@@ -125,6 +125,7 @@ public class VirtualFileSystem {
             aux = bfsIt.next();
         }
 
+        // Regenerar la lista.
         fileList = new ArrayList<>();
         pIt = new PreorderIterator<>(fileTree, fileTree.root());
         while(pIt.hasNext())
