@@ -143,6 +143,19 @@ public class VirtualFileSystem {
                 .getFile().getName().contains(substring);
 
         return filter(predicate, idStartFile, false);
+/*
+        List<String> iterable = new ArrayList<>();
+
+        PreorderIterator<VirtualFile> it =
+                new PreorderIterator<>(fileTree, fileList.get(idStartFile), predicate);
+
+        while(it.hasNext()) {
+            Position<VirtualFile> position = it.next();
+            if(position != null)
+                iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
+        }
+
+        return iterable; */
     }
 
     public Iterable<String> findBySize(int idStartFile, long minSize, long maxSize) {
@@ -156,10 +169,22 @@ public class VirtualFileSystem {
                         >= minSize && vf.getElement().length() <= maxSize;
 
         return filter(predicate, idStartFile, true);
+    /**
+        List<String> iterable = new ArrayList<>();
+
+        PreorderIterator<VirtualFile> it =
+                new PreorderIterator<>(fileTree, fileList.get(idStartFile), predicate);
+
+        while(it.hasNext()) {
+            Position<VirtualFile> position = it.next();
+            if(position != null && !position.getElement().getFile().isDirectory())
+                iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
+        }
+
+        return iterable;*/
     }
 
-    private Iterable<String> filter(Predicate<Position<VirtualFile>> predicate, int id
-            , boolean onlyFiles) {
+    private Iterable<String> filter(Predicate<Position<VirtualFile>> predicate, int id, boolean onlyFiles) {
 
         List<String> iterable = new ArrayList<>();
 
@@ -168,8 +193,12 @@ public class VirtualFileSystem {
 
         while(it.hasNext()) {
             Position<VirtualFile> position = it.next();
-            if(position != null && !position.getElement().getFile().isDirectory())
-                iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
+            if(position != null)
+                if(!position.getElement().getFile().isDirectory())
+                    iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
+                else
+                    if(!onlyFiles)
+                        iterable.add(fileList.indexOf(position) + "\t" + position.getElement().getName());
         }
 
         return iterable;
