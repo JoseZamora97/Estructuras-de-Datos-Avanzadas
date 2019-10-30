@@ -438,8 +438,19 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public boolean isComplete() {
-        //TODO: Practica 3 Ejercicio 1
-        throw new RuntimeException("Not yet implemented");
+        return isComplete(this.root);
+    }
+
+    private boolean isComplete(BTNode<E> node) {
+        if(isInternal(node)) {
+            if (!hasLeft(node) || !hasRight(node))
+                return false;
+
+            return isComplete(node.getLeft()) && isComplete(node.getRight());
+        }
+        else
+            return true;
+
     }
 
     // Auxiliary methods
@@ -448,7 +459,7 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
      * If v is a good binary tree node, cast to BTPosition, else throw exception
      */
     private BTNode<E> checkPosition(Position<E> p) {
-        if (p == null || !(p instanceof BTNode)) {
+        if (!(p instanceof BTNode)) {
             throw new RuntimeException("The position is invalid");
         }
         return (BTNode<E>) p;
