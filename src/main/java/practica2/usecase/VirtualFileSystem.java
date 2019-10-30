@@ -56,6 +56,7 @@ public class VirtualFileSystem {
             pvf = fileTree.add(vf, position);
 
             fileList.add(pvf);
+            vf.setIndex(fileList.indexOf(pvf));
 
             if(f.isDirectory())
                 generateFileSystem(vf, pvf);
@@ -67,20 +68,17 @@ public class VirtualFileSystem {
     }
 
     public String getFileSystem() {
-
         StringBuilder output = new StringBuilder();
 
-        int index = 0;
-
-        for (Position<VirtualFile> pvf : fileList) {
-            output.append(compoundFileSystem(pvf.getElement(), index));
-            index++;
-        }
+        for (Position<VirtualFile> pvf : fileList)
+            output.append(compoundFileSystem(pvf.getElement()));
 
         return output.toString();
     }
 
-    private String compoundFileSystem(VirtualFile element, int index) {
+    private String compoundFileSystem(VirtualFile element) {
+
+        int index = element.getIndex();
 
         StringBuilder output = new StringBuilder(index + " ");
 
@@ -95,18 +93,43 @@ public class VirtualFileSystem {
     public void moveFileById(int idFile, int idTargetFolder) {
         checkId(idFile);
 
+        BFSIterator<VirtualFile> bfsIt;
+        PreorderIterator<VirtualFile> pIt;
+
         if(!fileList.get(idTargetFolder).getElement().getFile().isDirectory())
             throw new RuntimeException("Target can't be a file.");
 
-        BFSIterator<VirtualFile> it = new BFSIterator<>(fileTree, fileList.get(idFile));
-        while(it.hasNext()) {
-            if (it.next() == fileList.get(idTargetFolder))
+        bfsIt = new BFSIterator<>(fileTree, fileList.get(idFile));
+        while(bfsIt.hasNext()) {
+            if (bfsIt.next() == fileList.get(idTargetFolder))
                 throw new RuntimeException("A file can't be a subdirectory of itself.");
         }
 
-        fileTree.moveSubtree(fileList.get(idFile), fileList.get(idTargetFolder));
+        Position<VirtualFile> src = fileList.get(idFile);
+        Position<VirtualFile> dst = fileList.get(idTargetFolder);
 
-        // TODO: continuar
+        for(Position<VirtualFile> p : fileTree.children(dst))
+            if(p == src)
+                return;
+
+        fileTree.moveSubtree(src, dst);
+
+        Position<VirtualFile> aux = src;
+        bfsIt = new BFSIterator<>(fileTree, aux);
+
+        // Update index.
+        while(bfsIt.hasNext()) {
+            int parentLvl = fileTree.parent(aux).getElement().getLevel();
+            aux.getElement().setLevel(parentLvl+1);
+            fileList.remove(aux);
+            aux = bfsIt.next();
+        }
+
+        fileList = new ArrayList<>();
+        pIt = new PreorderIterator<>(fileTree, fileTree.root());
+        while(pIt.hasNext())
+            fileList.add(pIt.next());
+
     }
 
     public void removeFileById(int idFile) {

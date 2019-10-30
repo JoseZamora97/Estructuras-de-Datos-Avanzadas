@@ -8,10 +8,20 @@ public class VirtualFile {
 
     private File file;
     private int level;
+    private int index;
 
     public VirtualFile(File file, int level) {
         this.file = file;
         this.level = level;
+        this.index = 0;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public File getFile() {
