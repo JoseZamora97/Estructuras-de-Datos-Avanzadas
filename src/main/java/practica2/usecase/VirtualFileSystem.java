@@ -197,7 +197,7 @@ public class VirtualFileSystem {
 
     public String getFilePath(int idFile) {
         checkId(idFile);
-        return fileList.get(idFile).getElement().getFile().getAbsolutePath()
+        return fileList.get(idFile).getElement().getFile().getPath()
                 .replace("\\", "/");
     }
 

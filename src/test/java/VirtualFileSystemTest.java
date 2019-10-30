@@ -208,8 +208,6 @@ public class VirtualFileSystemTest {
         vfs.removeFileById(4);
         exception = assertThrows(RuntimeException.class, () -> vfs.findBySize(4, 0,10));
         assertEquals(INVALID_ID_MESSAGE,exception.getMessage());
-
-
     }
 
     @Test
@@ -244,16 +242,16 @@ public class VirtualFileSystemTest {
     void getFilePath() {
         String output, expected;
         output = vfs.getFilePath(0);
-        expected = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz";
+        expected = "src/main/resources/practica2/DirectorioRaiz";
         assertEquals(expected, output);
 
         output = vfs.getFilePath(3);
-        expected = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz/SubdirectorioA/ArchivoB.ext";
+        expected = "src/main/resources/practica2/DirectorioRaiz/SubdirectorioA/ArchivoB.ext";
         assertEquals(expected, output);
 
         vfs.loadFileSystem(path2);
         output = vfs.getFilePath(0);
-        expected = "C:/Users/europ/Desktop/PracticasEDA/src/main/resources/practica2/DirectorioRaiz/SubdirectorioA";
+        expected = "src/main/resources/practica2/DirectorioRaiz/SubdirectorioA";
         assertEquals(expected, output);
 
     }
