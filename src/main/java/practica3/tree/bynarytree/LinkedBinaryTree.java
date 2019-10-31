@@ -370,7 +370,6 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
         }
     }
 
-
     @Override
     public BinaryTree<E> subTree(Position<E> v) {
         BTNode<E> newRoot = checkPosition(v);
@@ -445,12 +444,10 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
         if(isInternal(node)) {
             if (!hasLeft(node) || !hasRight(node))
                 return false;
-
             return isComplete(node.getLeft()) && isComplete(node.getRight());
         }
         else
             return true;
-
     }
 
     // Auxiliary methods
