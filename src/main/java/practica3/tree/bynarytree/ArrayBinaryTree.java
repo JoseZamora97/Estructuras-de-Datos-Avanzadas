@@ -6,6 +6,9 @@ import java.util.List;
 
 import practica2.Position;
 
+import practica3.iterators.InorderBinaryTreeIterator;
+import practica3.iterators.LevelBinaryTreeIterator;
+
 @SuppressWarnings("unchecked")
 public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
@@ -80,16 +83,10 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         return getChild(v, LEFT);
     }
 
-    private Position<E> getChild(Position<E> v, int side) {
-        int iParent = checkPosition(v).getIndex();
-        return (BTPos<E>) this.tree[2*iParent + side];
-    }
-
     @Override
     public Position<E> right(Position<E> v) throws RuntimeException {
         if(!hasRight(v))
             throw new RuntimeException("No right child");
-
         return getChild(v, RIGHT);
     }
 
@@ -112,19 +109,18 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
     }
 
     @Override
-    public Position<E> sibling(Position<E> p) throws RuntimeException {
+    public Position<E> sibling(Position<E> p) {
         BTPos<E> node = checkPosition(p);
-        Position<E> sibling;
 
         if(node.isLeft())
-            sibling = getChild(parent(p), LEFT);
-        else
-            sibling = getChild(parent(p), RIGHT);
+            if(tree[node.getIndex() + RIGHT] != null)
+                return (Position<E>) tree[node.getIndex() + RIGHT];
 
-        if(sibling == null)
-            throw new RuntimeException("No sibling");
+        if(node.isRight())
+            if(tree[node.getIndex() - RIGHT] != null)
+                return (Position<E>) tree[node.getIndex() - RIGHT];
 
-        return sibling;
+        throw new RuntimeException("No sibling");
     }
 
     @Override
@@ -156,21 +152,20 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public E remove(Position<E> p) throws RuntimeException {
+
         BTPos<E> pos = checkPosition(p);
+
         if(hasLeft(pos) && hasRight(pos))
             throw new RuntimeException("Cannot remove node with two children");
 
         size--;
-        removeRecursive(pos);
-        return pos.getElement();
-    }
 
-    public void removeRecursive(Position <E> i) {
-        this.tree[((BTPos<E>) i ) .getIndex()] = null;
-        if(hasLeft(i))
-            removeRecursive(left(i));
-        if(hasRight(i))
-            removeRecursive(right(i));
+        if(!hasLeft(p) && !hasRight(p))
+            tree[pos.getIndex()] = null;
+
+        // hacer subtree.
+
+        return pos.getElement();
     }
 
     @Override
@@ -180,30 +175,90 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public BinaryTree<E> subTree(Position<E> v) {
-        return null;
+        BTPos<E> position = checkPosition(v);
+        ArrayBinaryTree<E> bTree = new ArrayBinaryTree<>();
+        LevelBinaryTreeIterator<E> it = new LevelBinaryTreeIterator<>(this, v);
+
+        bTree.tree[ROOT_POS] = position;
+
+        while(it.hasNext()) {
+            if(position != root()) {
+                position = (BTPos<E>) it.next();
+                if(position.isRight())
+                    bTree.insertRight(position, position.element);
+                if(position.isLeft())
+                    bTree.insertLeft(position, position.element);
+            }
+        }
+
+        for(int i=0; i<capacity; i++)
+            this.tree[i] = null;
+
+        it = new LevelBinaryTreeIterator<>(bTree);
+
+        this.tree[ROOT_POS] = bTree.root();
+        this.size = 1;
+
+        while(it.hasNext()) {
+            BTPos<E> position2 = (BTPos<E>) it.next();
+            if(position2 != root()) {
+                if(position2.isRight())
+                    this.insertRight(position2, position2.element);
+                if(position2.isLeft())
+                    this.insertLeft(position2, position2.element);
+            }
+        }
+
+        return bTree;
     }
 
     @Override
-    public void attachLeft(Position<E> p, BinaryTree<E> tree) throws RuntimeException {
+    public void attachLeft(Position<E> p, BinaryTree<E> tree)  {
+        checkPosition(p);
+
+//        LevelBinaryTreeIterator<E> itTree = new LevelBinaryTreeIterator<>(tree);
+//        LevelBinaryTreeIterator<E> itThis = new LevelBinaryTreeIterator<>(this, p);
+//
+//        Position<E> pNextTree, pNextThis, pParentNextThis;
+//
+//        pParentNextThis = this.parent(p);
+//
+//        while(itTree.hasNext()){
+//
+//            pNextTree = itTree.next();
+//            pNextThis = itThis.next();
+//
+//            if(pNextThis != null) {
+//                if (!hasLeft(pNextThis))
+//                    insertLeft(pNextThis, pNextTree.getElement());
+//                else
+//                    replace(pNextThis, pNextTree.getElement());
+//
+//                if (!hasRight(pNextThis))
+//                    insertRight(pNextThis, pNextTree.getElement());
+//                else
+//                    replace(pNextThis, pNextTree.getElement());
+//            }
+//            else {
+//                if (tree.right(tree.parent(pNextTree)) == pNextTree)
+//                    insertRight(this.parent(pParentNextThis), pNextTree.getElement());
+//
+//                if (tree.left(tree.parent(pNextTree)) == pNextTree)
+//                    insertRight(this.parent(pParentNextThis), pNextTree.getElement());
+//            }
+//
+//            pParentNextThis = this.parent(pNextThis);
+//        }
+
     }
 
     @Override
-    public void attachRight(Position<E> p, BinaryTree<E> tree) throws RuntimeException {
+    public void attachRight(Position<E> p, BinaryTree<E> tree) {
     }
 
     @Override
     public boolean isComplete() {
         return isComplete((BTPos<E>)tree[ROOT_POS]);
-    }
-
-    private boolean isComplete(Position<E> node) {
-        if(isInternal(node)) {
-            if (!hasLeft(node) || !hasRight(node))
-                return false;
-            return isComplete(left(node)) && isComplete(right(node));
-        }
-        else
-            return true;
     }
 
     @Override
@@ -218,8 +273,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public Position<E> root() {
-        if(isEmpty())
-            throw new RuntimeException("The tree is empty");
+        if(isEmpty()) throw new RuntimeException("The tree is empty");
         return (Position<E>) tree[ROOT_POS];
     }
 
@@ -228,7 +282,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         BTPos<E> node = checkPosition(v);
 
         if(node == root())
-            return null;
+            throw new RuntimeException("No parent");
 
         if(node.isLeft())
             return (Position<E>) tree[node.getIndex()/2];
@@ -282,7 +336,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public Iterator<Position<E>> iterator() {
-        return null;
+        return new InorderBinaryTreeIterator<>(this);
     }
 
     /**
@@ -292,5 +346,20 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         if (!(p instanceof BTPos))
             throw new RuntimeException("The position is invalid");
         return (BTPos<E>) p;
+    }
+
+    private Position<E> getChild(Position<E> v, int side) {
+        int iParent = checkPosition(v).getIndex();
+        return (BTPos<E>) this.tree[2*iParent + side];
+    }
+
+    private boolean isComplete(Position<E> node) {
+        if(isInternal(node)) {
+            if (!hasLeft(node) || !hasRight(node))
+                return false;
+            return isComplete(left(node)) && isComplete(right(node));
+        }
+        else
+            return true;
     }
 }
