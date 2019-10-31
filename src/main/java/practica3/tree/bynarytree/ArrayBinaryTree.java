@@ -170,7 +170,15 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public void swap(Position<E> p1, Position<E> p2) {
+        BTPos<E> p1pos = checkPosition(p1);
+        BTPos<E> p2pos = checkPosition(p2);
 
+        int aux = p2pos.index;
+        p2pos.index = p1pos.index;
+        p1pos.index = aux;
+
+        tree[p1pos.index] = p1;
+        tree[p2pos.index] = p2;
     }
 
     @Override
