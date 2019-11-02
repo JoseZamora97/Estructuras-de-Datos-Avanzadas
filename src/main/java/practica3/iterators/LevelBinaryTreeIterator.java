@@ -9,12 +9,14 @@ import practica3.tree.bynarytree.BinaryTree;
 
 public class LevelBinaryTreeIterator<T> implements Iterator<Position<T>> {
 
-    private Deque<Position<T>> nodeQueue = new LinkedList<>();
+    private Deque<Position<T>> nodeQueue;
     private final BinaryTree<T> tree;
 
     public LevelBinaryTreeIterator(BinaryTree<T> tree) {
         this.tree = tree;
         this.nodeQueue = new LinkedList<>();
+        if(!tree.isEmpty())
+            this.nodeQueue.add(tree.root());
     }
 
     public LevelBinaryTreeIterator(BinaryTree<T> tree, Position<T> start) {

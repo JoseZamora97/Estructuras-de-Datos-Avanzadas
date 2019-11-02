@@ -84,7 +84,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
     }
 
     @Override
-    public Position<E> right(Position<E> v) throws RuntimeException {
+    public Position<E> right(Position<E> v) {
         if(!hasRight(v))
             throw new RuntimeException("No right child");
         return getChild(v, RIGHT);
@@ -185,6 +185,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
     public BinaryTree<E> subTree(Position<E> v) {
         BTPos<E> position = checkPosition(v);
         ArrayBinaryTree<E> bTree = new ArrayBinaryTree<>();
+
         LevelBinaryTreeIterator<E> it = new LevelBinaryTreeIterator<>(this, v);
 
         bTree.tree[ROOT_POS] = position;
@@ -222,42 +223,52 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public void attachLeft(Position<E> p, BinaryTree<E> tree)  {
-        checkPosition(p);
 
-//        LevelBinaryTreeIterator<E> itTree = new LevelBinaryTreeIterator<>(tree);
-//        LevelBinaryTreeIterator<E> itThis = new LevelBinaryTreeIterator<>(this, p);
-//
-//        Position<E> pNextTree, pNextThis, pParentNextThis;
-//
-//        pParentNextThis = this.parent(p);
-//
-//        while(itTree.hasNext()){
-//
-//            pNextTree = itTree.next();
-//            pNextThis = itThis.next();
-//
-//            if(pNextThis != null) {
-//                if (!hasLeft(pNextThis))
-//                    insertLeft(pNextThis, pNextTree.getElement());
-//                else
-//                    replace(pNextThis, pNextTree.getElement());
-//
-//                if (!hasRight(pNextThis))
-//                    insertRight(pNextThis, pNextTree.getElement());
-//                else
-//                    replace(pNextThis, pNextTree.getElement());
-//            }
-//            else {
-//                if (tree.right(tree.parent(pNextTree)) == pNextTree)
-//                    insertRight(this.parent(pParentNextThis), pNextTree.getElement());
-//
-//                if (tree.left(tree.parent(pNextTree)) == pNextTree)
-//                    insertRight(this.parent(pParentNextThis), pNextTree.getElement());
-//            }
-//
-//            pParentNextThis = this.parent(pNextThis);
-//        }
+        BTPos<E> posToAttach = checkPosition(p);
 
+        if(!hasLeft(p))
+            size++;
+
+        int index = 2*posToAttach.getIndex();
+
+        BTPos<E> root = (BTPos<E>) tree.root();
+        root.setIndex(index);
+        root.setTree(this);
+
+        this.tree[root.getIndex()] = root;
+
+        LevelBinaryTreeIterator<E> it = new LevelBinaryTreeIterator<>(tree);
+
+        index = 2*index;
+
+        while(it.hasNext()){
+
+            Position<E> position = it.next();
+            Position<E> aux = position;
+            BTPos<E> bpos = (BTPos<E>) position;
+
+            int i = -1;
+            while(aux != tree.root()) {
+                aux = tree.parent(aux);
+                i++;
+            }
+
+            if(position != tree.root()) {
+                int insertionIndex = (int) (Math.pow(2, i)*index);
+                Position<E> parent = tree.parent(position);
+
+                if(tree.left(parent) == position)
+                    insertionIndex = insertionIndex + LEFT;
+
+                if(tree.right(parent) == position)
+                    insertionIndex = insertionIndex + RIGHT;
+
+                bpos.setIndex(insertionIndex);
+                bpos.setTree(this);
+
+                size++;
+            }
+        }
     }
 
     @Override
@@ -369,5 +380,20 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         }
         else
             return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = 1; i<capacity; i++) {
+            stringBuilder.append(i).append(" ");
+            if (tree[i] == null)
+                stringBuilder.append("X");
+            else
+                stringBuilder.append(tree[i]);
+
+            stringBuilder.append(",").append("\n");
+        }
+        return stringBuilder.toString();
     }
 }

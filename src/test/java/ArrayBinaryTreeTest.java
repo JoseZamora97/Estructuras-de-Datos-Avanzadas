@@ -294,7 +294,6 @@ public class ArrayBinaryTreeTest {
 
     }
 
-
     @org.junit.jupiter.api.Test
     void swap() {
         Character e2 = pos[2].getElement();
