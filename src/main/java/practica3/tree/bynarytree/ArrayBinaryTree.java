@@ -14,7 +14,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     private Object[] tree;
     private final int ROOT_POS = 1;
-    private int capacity = 50;
+    private int capacity = 10;
 
     private final int LEFT = 0;
     private final int RIGHT = 1;
@@ -131,16 +131,15 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     private Position<E> insert(Position<E> p, E e, int side) {
         BTPos<E> node = checkPosition(p);
+
+        int insertionIndex = 2*node.index+side;
+        if(insertionIndex > capacity)
+            increaseCapacity();
+
         Position<E> pos = getChild(p, side);
 
         if(pos != null)
             throw new RuntimeException("Node already has a left child");
-
-
-        int insertionIndex = 2*node.index+side;
-
-        if(insertionIndex > capacity)
-            increaseCapacity();
 
         size++;
 
@@ -342,7 +341,12 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     private Position<E> getChild(Position<E> v, int side) {
         int iParent = checkPosition(v).getIndex();
-        return (BTPos<E>) this.tree[2*iParent + side];
+        int insertionIndex = 2*iParent + side;
+
+        if(insertionIndex >= capacity)
+            increaseCapacity();
+
+        return (BTPos<E>) this.tree[insertionIndex];
     }
 
     private boolean isComplete(Position<E> node) {
@@ -387,7 +391,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
             if(tree.right(parent) == position)
                 insertionIndex = insertionIndex + RIGHT;
 
-            if(insertionIndex > capacity)
+            if(insertionIndex >= capacity)
                 increaseCapacity();
 
             this.tree[insertionIndex] = position;
