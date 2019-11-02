@@ -183,39 +183,36 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public BinaryTree<E> subTree(Position<E> v) {
-        BTPos<E> position = checkPosition(v);
+        BTPos<E> node = checkPosition(v);
+        int pos = node.index;
         ArrayBinaryTree<E> bTree = new ArrayBinaryTree<>();
-
         LevelBinaryTreeIterator<E> it = new LevelBinaryTreeIterator<>(this, v);
 
-        bTree.tree[ROOT_POS] = position;
+        int indexToInsert = ROOT_POS;
 
         while(it.hasNext()) {
-            if(position != root()) {
-                position = (BTPos<E>) it.next();
-                if(position.isRight())
-                    bTree.insertRight(position, position.element);
-                if(position.isLeft())
-                    bTree.insertLeft(position, position.element);
+            BTPos<E> position = (BTPos<E>) it.next();
+            BTPos<E> parent = (BTPos<E>) parent(position);
+            if(position != v) {
+                int index = 0;
+                int aux = position.getIndex();
+
+                while(aux != pos) {
+                    if(aux%2 != 0) aux --;
+                    aux = aux/2;
+                    index++;
+                }
+
+                indexToInsert = (int) (Math.pow(2, index) );
+
+                if(position.isRight()) indexToInsert += RIGHT;
+                if(position.isLeft()) indexToInsert += LEFT;
             }
-        }
 
-        for(int i=0; i<capacity; i++)
-            this.tree[i] = null;
-
-        it = new LevelBinaryTreeIterator<>(bTree);
-
-        this.tree[ROOT_POS] = bTree.root();
-        this.size = 1;
-
-        while(it.hasNext()) {
-            BTPos<E> position2 = (BTPos<E>) it.next();
-            if(position2 != root()) {
-                if(position2.isRight())
-                    this.insertRight(position2, position2.element);
-                if(position2.isLeft())
-                    this.insertLeft(position2, position2.element);
-            }
+            position.setTree(bTree);
+            position.setIndex(indexToInsert);
+            bTree.tree[indexToInsert] = position;
+            bTree.size++;
         }
 
         return bTree;
@@ -223,56 +220,16 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public void attachLeft(Position<E> p, BinaryTree<E> tree)  {
-
-        BTPos<E> posToAttach = checkPosition(p);
-
         if(!hasLeft(p))
             size++;
-
-        int index = 2*posToAttach.getIndex();
-
-        BTPos<E> root = (BTPos<E>) tree.root();
-        root.setIndex(index);
-        root.setTree(this);
-
-        this.tree[root.getIndex()] = root;
-
-        LevelBinaryTreeIterator<E> it = new LevelBinaryTreeIterator<>(tree);
-
-        index = 2*index;
-
-        while(it.hasNext()){
-
-            Position<E> position = it.next();
-            Position<E> aux = position;
-            BTPos<E> bpos = (BTPos<E>) position;
-
-            int i = -1;
-            while(aux != tree.root()) {
-                aux = tree.parent(aux);
-                i++;
-            }
-
-            if(position != tree.root()) {
-                int insertionIndex = (int) (Math.pow(2, i)*index);
-                Position<E> parent = tree.parent(position);
-
-                if(tree.left(parent) == position)
-                    insertionIndex = insertionIndex + LEFT;
-
-                if(tree.right(parent) == position)
-                    insertionIndex = insertionIndex + RIGHT;
-
-                bpos.setIndex(insertionIndex);
-                bpos.setTree(this);
-
-                size++;
-            }
-        }
+        attach(p, tree, LEFT);
     }
 
     @Override
     public void attachRight(Position<E> p, BinaryTree<E> tree) {
+        if(!hasRight(p))
+            size++;
+        attach(p, tree, RIGHT);
     }
 
     @Override
@@ -380,6 +337,54 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         }
         else
             return true;
+    }
+
+    private void attach(Position<E> p, BinaryTree<E> tree, int side) {
+        LevelBinaryTreeIterator<E> it = new LevelBinaryTreeIterator<>(tree);
+
+        int initialIndex = 2 * ((BTPos<E>)p).getIndex() + side;
+        int finalIndex = initialIndex;
+
+        BTPos<E> root = (BTPos<E>) tree.root();
+        this.tree[initialIndex] = root;
+
+        int index = 2*initialIndex;
+
+        it.next();
+
+        while(it.hasNext()){
+            Position<E> position = it.next();
+            Position<E> aux = position;
+
+            int i = -1;
+            while(aux != tree.root()) {
+                aux = tree.parent(aux);
+                i++;
+            }
+
+            Position<E> parent = tree.parent(position);
+            int insertionIndex = (int) (Math.pow(2, i)*index);
+
+            if(tree.left(parent) == position)
+                insertionIndex = insertionIndex + LEFT;
+
+            if(tree.right(parent) == position)
+                insertionIndex = insertionIndex + RIGHT;
+
+            this.tree[insertionIndex] = position;
+            finalIndex = insertionIndex;
+
+            size++;
+
+        }
+
+        for(int i=initialIndex; i<=finalIndex; i++){
+            BTPos<E> bpos = (BTPos<E>) this.tree[i];
+            if(bpos!=null){
+                bpos.setIndex(i);
+                bpos.setTree(this);
+            }
+        }
     }
 
     @Override
