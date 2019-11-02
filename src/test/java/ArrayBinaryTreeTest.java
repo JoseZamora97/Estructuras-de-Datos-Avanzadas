@@ -281,6 +281,9 @@ public class ArrayBinaryTreeTest {
         Position<Character> p1 = t.addRoot('-');
         Position<Character> p2 = t.insertLeft(p1, '1');
         Position<Character> p3 = t.insertRight(p1, '2');
+        Position<Character> p4 = t.insertLeft(p2, '1');
+        Position<Character> p5 = t.insertRight(p2, '2');
+
         tree.attachRight(pos[5], t);
         assertEquals(pos[5], tree.parent(p1));
         assertEquals(p1, tree.right(pos[5]));

@@ -136,9 +136,15 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         if(pos != null)
             throw new RuntimeException("Node already has a left child");
 
+
+        int insertionIndex = 2*node.index+side;
+
+        if(insertionIndex > capacity)
+            increaseCapacity();
+
         size++;
 
-        BTPos<E> newNode = new BTPos<>(e, 2*node.index+side, this);
+        BTPos<E> newNode = new BTPos<>(e, insertionIndex, this);
         tree[newNode.getIndex()] =  newNode;
 
         return newNode;
@@ -184,35 +190,48 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
     @Override
     public BinaryTree<E> subTree(Position<E> v) {
         BTPos<E> node = checkPosition(v);
-        int pos = node.index;
         ArrayBinaryTree<E> bTree = new ArrayBinaryTree<>();
         LevelBinaryTreeIterator<E> it = new LevelBinaryTreeIterator<>(this, v);
 
-        int indexToInsert = ROOT_POS;
+        int insertionIndex = ROOT_POS;
 
-        while(it.hasNext()) {
-            BTPos<E> position = (BTPos<E>) it.next();
-            BTPos<E> parent = (BTPos<E>) parent(position);
-            if(position != v) {
-                int index = 0;
-                int aux = position.getIndex();
+        while (it.hasNext()) {
+            Position<E> position = it.next();
 
-                while(aux != pos) {
-                    if(aux%2 != 0) aux --;
-                    aux = aux/2;
-                    index++;
-                }
+            if(position != node) {
 
-                indexToInsert = (int) (Math.pow(2, index) );
+                Position<E> parent = parent(position);
+                int j = 1;
+                for(int i = 1; i<capacity && bTree.tree[i] != parent; i++) j++;
 
-                if(position.isRight()) indexToInsert += RIGHT;
-                if(position.isLeft()) indexToInsert += LEFT;
+                insertionIndex = 2*j;
+
+                if(left(parent) == position)
+                    insertionIndex = insertionIndex + LEFT;
+
+                if(right(parent) == position)
+                    insertionIndex = insertionIndex + RIGHT;
+
             }
 
-            position.setTree(bTree);
-            position.setIndex(indexToInsert);
-            bTree.tree[indexToInsert] = position;
+            if(insertionIndex > bTree.capacity)
+                bTree.increaseCapacity();
+
+            bTree.tree[insertionIndex] = position;
             bTree.size++;
+        }
+
+        it = new LevelBinaryTreeIterator<>(this, v);
+
+        while(it.hasNext()) {
+            BTPos<E> pos = (BTPos<E>) it.next();
+            pos.tree = bTree;
+            tree[pos.getIndex()] = null;
+        }
+
+        for(int k = 1; k < bTree.capacity; k++) {
+            BTPos<E> pos = (BTPos<E>) bTree.tree[k];
+            if(pos!=null) pos.setIndex(k);
         }
 
         return bTree;
@@ -315,9 +334,6 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         return new InorderBinaryTreeIterator<>(this);
     }
 
-    /**
-     * If v is a good binary tree node, cast to BTPosition, else throw exception
-     */
     private BTPos<E> checkPosition(Position<E> p) {
         if (!(p instanceof BTPos))
             throw new RuntimeException("The position is invalid");
@@ -371,6 +387,9 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
             if(tree.right(parent) == position)
                 insertionIndex = insertionIndex + RIGHT;
 
+            if(insertionIndex > capacity)
+                increaseCapacity();
+
             this.tree[insertionIndex] = position;
             finalIndex = insertionIndex;
 
@@ -400,5 +419,17 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
             stringBuilder.append(",").append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    private void increaseCapacity(){
+        int newCapacity = capacity * 2;
+        Object[] newNodes = new Object[newCapacity];
+
+        for (int i = 0; i<capacity; i++)
+            if (tree[i] != null)
+                newNodes[i] = tree[i];
+
+        tree = newNodes;
+        capacity = newCapacity;
     }
 }

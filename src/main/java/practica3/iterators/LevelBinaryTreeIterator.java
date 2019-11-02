@@ -33,10 +33,13 @@ public class LevelBinaryTreeIterator<T> implements Iterator<Position<T>> {
     @Override
     public Position<T> next() {
         Position<T> aux = nodeQueue.remove();
+
         if(tree.hasLeft(aux))
             nodeQueue.addLast(tree.left(aux));
+
         if(tree.hasRight(aux))
             nodeQueue.addLast(tree.right(aux));
+
         return aux;
     }
 }
