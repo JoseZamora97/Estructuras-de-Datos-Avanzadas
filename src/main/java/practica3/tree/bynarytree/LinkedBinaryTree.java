@@ -400,7 +400,6 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
             throw new RuntimeException("Node already has a left child");
         }
 
-
         if (tree != null && !tree.isEmpty()) {
             //Check position will fail if tree is not an instance of LinkedBinaryTree
             BTNode<E> r = checkPosition(tree.root());

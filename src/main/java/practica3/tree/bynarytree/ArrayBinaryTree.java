@@ -14,7 +14,7 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
 
     private Object[] tree;
     private final int ROOT_POS = 1;
-    private int capacity = 10;
+    private int capacity = 100;
 
     private final int LEFT = 0;
     private final int RIGHT = 1;
@@ -168,7 +168,20 @@ public class ArrayBinaryTree<E> implements BinaryTree<E> {
         if(!hasLeft(p) && !hasRight(p))
             tree[pos.getIndex()] = null;
 
-        // hacer subtree.
+        else {
+            Position<E> parent = parent(pos);
+            ArrayBinaryTree<E> subTree;
+            if(hasRight(pos))
+                subTree = (ArrayBinaryTree<E>) subTree(right(pos));
+            else
+                subTree = (ArrayBinaryTree<E>) subTree(left(pos));
+
+            if(right(parent) == pos)
+                attachRight(parent, subTree);
+
+            if(left(parent) == pos)
+                attachLeft(parent, subTree);
+        }
 
         return pos.getElement();
     }
