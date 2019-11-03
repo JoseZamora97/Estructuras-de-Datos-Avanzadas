@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MorseTranslatorTest {
 
-    MorseTranslator translatorSample;
+    private MorseTranslator translatorSample;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +55,7 @@ class MorseTranslatorTest {
         output = translatorSample.decode(input);
         assertEquals(expected, output);
 
-        input = ".. --..- .- -  ---- ....- .--";
+        input = ".. --..- .- -  ---- ....- .-- ";
         expected = "hello world";
         output = translatorSample.decode(input);
         assertEquals(expected, output);
@@ -94,8 +94,8 @@ class MorseTranslatorTest {
         output = translatorSample.encode(input);
         assertEquals(expected, output);
 
-        input = "hello world";
-        expected = ".. --..- .- -  ---- ....- .--";
+        input = "hello world hello world";
+        expected = ".. --..- .- -  ---- ....- .-- .. --..- .- -  ---- ....- .--";
         output = translatorSample.encode(input);
         assertEquals(expected, output);
 
