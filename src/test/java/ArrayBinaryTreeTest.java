@@ -1,8 +1,8 @@
 import java.util.Iterator;
 
-import practica2.Position;
-import practica3.tree.bynarytree.ArrayBinaryTree;
-import practica3.tree.bynarytree.BinaryTree;
+import practicas.Position;
+import practicas.practica3.bynarytree.ArrayBinaryTree;
+import practicas.practica3.bynarytree.BinaryTree;
 
 import static org.junit.jupiter.api.Assertions.*;
 

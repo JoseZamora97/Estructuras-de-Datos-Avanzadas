@@ -1,5 +1,5 @@
-import practica2.Position;
-import practica2.tree.narytree.LinkedTree;
+import practicas.Position;
+import practicas.practica2.narytree.LinkedTree;
 
 import static org.junit.jupiter.api.Assertions.*;
 

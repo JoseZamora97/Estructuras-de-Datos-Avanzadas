@@ -1,6 +1,6 @@
-import practica2.Position;
-import practica2.iterators.PreorderIterator;
-import practica2.tree.narytree.LinkedTree;
+import practicas.Position;
+import practicas.practica2.iterators.PreorderIterator;
+import practicas.practica2.narytree.LinkedTree;
 
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;

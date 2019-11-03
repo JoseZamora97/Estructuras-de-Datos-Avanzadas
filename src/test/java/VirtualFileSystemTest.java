@@ -2,15 +2,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import practica2.usecase.VirtualFileSystem;
+import practicas.practica2.usecase.VirtualFileSystem;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VirtualFileSystemTest {
 
     private final String INVALID_ID_MESSAGE = "Invalid ID.";
-    private String path = "src/main/resources/practica2/DirectorioRaiz";
-    private String path2 = "src/main/resources/practica2/DirectorioRaiz/SubdirectorioA";
+    private String path = "src/main/resources/practicas/DirectorioRaiz";
+    private String path2 = "src/main/resources/practicas/DirectorioRaiz/SubdirectorioA";
     private VirtualFileSystem vfs;
 
     @BeforeEach
@@ -27,7 +27,8 @@ public class VirtualFileSystemTest {
     @Test
     void loadFileSystem() {
         String output = vfs.getFileSystem();
-        String expected = "0 DirectorioRaiz\n" +
+        String expected =
+                "0 DirectorioRaiz\n" +
                 "1 \tSubdirectorioA\n" +
                 "2 \t\tArchivoA.ext\n" +
                 "3 \t\tArchivoB.ext\n" +
@@ -53,7 +54,8 @@ public class VirtualFileSystemTest {
         vfs.moveFileById(7,1);
         String output = vfs.getFileSystem();
 
-        String expected = "0 DirectorioRaiz\n" +
+        String expected =
+                "0 DirectorioRaiz\n" +
                 "1 \tSubdirectorioA\n" +
                 "2 \t\tArchivoA.ext\n" +
                 "3 \t\tArchivoB.ext\n" +
@@ -66,11 +68,10 @@ public class VirtualFileSystemTest {
                 "10 \t\t\t\tArchivoD.ext\n";
         assertEquals(expected,output);
 
-        /*TODO: pase estos test debugear*/
-
         vfs.moveFileById(8,4);
         output = vfs.getFileSystem();
-        expected = "0 DirectorioRaiz\n" +
+        expected =
+                "0 DirectorioRaiz\n" +
                 "1 \tSubdirectorioA\n" +
                 "2 \t\tArchivoA.ext\n" +
                 "3 \t\tArchivoB.ext\n" +
@@ -83,11 +84,11 @@ public class VirtualFileSystemTest {
                 "10 \t\t\t\tArchivoD.ext\n";
         assertEquals(expected, output);
 
-
         //Al mover una carpeta se mueve con el su contenido.
         vfs.moveFileById(4, 7);
         output = vfs.getFileSystem();
-        expected = "0 DirectorioRaiz\n" +
+        expected =
+                "0 DirectorioRaiz\n" +
                 "1 \tSubdirectorioA\n" +
                 "2 \t\tArchivoA.ext\n" +
                 "3 \t\tArchivoB.ext\n" +
@@ -164,7 +165,6 @@ public class VirtualFileSystemTest {
         output = iterable.toString();
         expected = "[]";
         assertEquals(expected,output);
-
     }
 
     @Test
@@ -242,16 +242,16 @@ public class VirtualFileSystemTest {
     void getFilePath() {
         String output, expected;
         output = vfs.getFilePath(0);
-        expected = "src/main/resources/practica2/DirectorioRaiz";
+        expected = "src/main/resources/practicas/DirectorioRaiz";
         assertEquals(expected, output);
 
         output = vfs.getFilePath(3);
-        expected = "src/main/resources/practica2/DirectorioRaiz/SubdirectorioA/ArchivoB.ext";
+        expected = "src/main/resources/practicas/DirectorioRaiz/SubdirectorioA/ArchivoB.ext";
         assertEquals(expected, output);
 
         vfs.loadFileSystem(path2);
         output = vfs.getFilePath(0);
-        expected = "src/main/resources/practica2/DirectorioRaiz/SubdirectorioA";
+        expected = "src/main/resources/practicas/DirectorioRaiz/SubdirectorioA";
         assertEquals(expected, output);
 
     }
