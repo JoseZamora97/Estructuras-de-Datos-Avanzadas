@@ -1,11 +1,14 @@
-import practicas.Position;
-import practicas.practica2.iterators.PreorderIterator;
-import practicas.practica2.narytree.LinkedTree;
+package practica2;
 
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import practicas.Position;
+import practicas.practica2.iterators.PreorderIterator;
+import practicas.practica2.narytree.LinkedTree;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PreorderIteratorTest {
 

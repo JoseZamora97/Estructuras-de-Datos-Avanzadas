@@ -1,3 +1,5 @@
+package practica3;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,6 +100,5 @@ class MorseTranslatorTest {
         expected = ".. --..- .- -  ---- ....- .-- .. --..- .- -  ---- ....- .--";
         output = translatorSample.encode(input);
         assertEquals(expected, output);
-
     }
 }
