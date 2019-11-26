@@ -1,7 +1,10 @@
 package practicas.practica4.HashTableMap;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import practicas.practica4.Entry;
 import practicas.practica4.Map;
@@ -13,13 +16,20 @@ import practicas.practica4.Map;
  * @author A. Duarte, J. Vélez, J. Sánchez-Oro, JD. Quintana
  */
 public class HashTableMapSC<K, V> implements Map<K, V> {
-    //TODO: Practica 4 Ejercicio 2
+
+    private static final int DEFAULT_CAPACITY = 1000;
+    private static final double DEFAULT_LOAD_FACTOR = 0.75;
+    protected int prime;
+    protected long scale, shift; // the shift and scaling factors
+    private double maxLoadFactor;
+    private int capacity, threshold, size = 0;
+    private List<HashEntry<K,V >>[] bucket;
 
     /**
      * Creates a hash table with prime factor 109345121 and capacity 1000.
      */
     public HashTableMapSC() {
-        throw new RuntimeException("Not yet implemented.");
+        this(109345121, DEFAULT_CAPACITY);
     }
 
     /**
@@ -28,7 +38,7 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
      * @param cap initial capacity
      */
     public HashTableMapSC(int cap) {
-        throw new RuntimeException("Not yet implemented.");
+        this(109345121, cap);
     }
 
     /**
@@ -38,7 +48,13 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
      * @param cap initial capacity
      */
     public HashTableMapSC(int p, int cap) {
-        throw new RuntimeException("Not yet implemented.");
+        this.prime = p;
+        this.capacity = cap;
+        this.bucket = (List<HashEntry<K,V>>[]) new LinkedList[this.capacity]; // safe cast
+        Arrays.fill(bucket, new LinkedList<>());
+        Random rand = new Random();
+        this.scale = rand.nextInt(prime - 1) + 1;
+        this.shift = rand.nextInt(prime);
     }
 
     /**
@@ -48,31 +64,54 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
      * @return the hash value
      */
     protected int hashValue(K key) {
-        throw new RuntimeException("Not yet implemented.");
+        return (int) ((Math.abs(key.hashCode() * scale + shift) % prime) % capacity);
     }
 
     @Override
-    public int size(){ throw new RuntimeException("Not yet implemented.");
+    public int size(){
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        throw new RuntimeException("Not yet implemented.");
+        return size == 0;
     }
 
+
+    // todo: mezclar funciones get e insert
     @Override
     public V get(K key) {
-        throw new RuntimeException("Not yet implemented.");
+        HashEntry<K,V> entry = checkKey(key);
+        return entry == null ? null : entry.value;
     }
 
     @Override
     public V put(K key, V value) {
-        throw new RuntimeException("Not yet implemented.");
+        HashEntry<K,V> oldEntry = checkKey(key);
+        V val;
+
+        if(oldEntry==null) {
+            val = null;
+            bucket[hashValue(key)].add(new HashEntry<>(key, value));
+            size++;
+        }
+
+        else{
+            val = oldEntry.value;
+            oldEntry.setValue(value);
+        }
+        return val;
     }
 
     @Override
     public V remove(K key) {
-        throw new RuntimeException("Not yet implemented.");
+        HashEntry<K,V> entry = checkKey(key);
+        bucket[hashValue(key)].remove(entry);
+
+        if(entry!=null)
+            size--;
+
+        return entry == null ? null : entry.value;
     }
 
     @Override
@@ -100,8 +139,17 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
      *
      * @param k Key
      */
-    protected void checkKey(K k) {
-        throw new RuntimeException("Not yet implemented.");
+    private HashEntry<K,V> checkKey(K k) {
+        // We cannot check the second test (i.e., k instanceof K) since we do not know the class K
+        if (k == null)
+            throw new IllegalStateException("Invalid key: null.");
+
+        int index = hashValue(k);
+        for(HashEntry<K,V> entry : bucket[index])
+            if(entry.getKey().equals(k))
+                return entry;
+
+        return null;
     }
 
     /**
@@ -162,7 +210,6 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
         public HashTableMapIterator(List<HashEntry<T, U>>[] map, int numElems) {
                 this.map = map;
-
         }
 
         @Override
