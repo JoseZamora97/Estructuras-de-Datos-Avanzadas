@@ -77,8 +77,6 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         return size == 0;
     }
 
-
-    // todo: mezclar funciones get e insert
     @Override
     public V get(K key) {
         HashEntry<K,V> entry = checkKey(key);
@@ -87,20 +85,14 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
-        HashEntry<K,V> oldEntry = checkKey(key);
-        V val;
+        HashEntry<K,V> entry = checkKey(key);
 
-        if(oldEntry==null) {
-            val = null;
-            bucket[hashValue(key)].add(new HashEntry<>(key, value));
-            size++;
-        }
+        if(entry!=null)
+            return entry.setValue(value);
 
-        else{
-            val = oldEntry.value;
-            oldEntry.setValue(value);
-        }
-        return val;
+        bucket[hashValue(key)].add(new HashEntry<>(key, value));
+        size++;
+        return null;
     }
 
     @Override
@@ -159,12 +151,12 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         throw new RuntimeException("Not yet implemented.");
     }
 
-    private class HashEntry<T, U> implements Entry<T, U> {
+    private static class HashEntry<T, U> implements Entry<T, U> {
 
         protected T key;
         protected U value;
 
-        public HashEntry(T k, U v) {
+        HashEntry(T k, U v) {
             key = k;
             value = v;
         }
@@ -179,7 +171,7 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
             return key;
         }
 
-        public U setValue(U val) {
+        U setValue(U val) {
             U oldValue = value;
             value = val;
             return oldValue;
