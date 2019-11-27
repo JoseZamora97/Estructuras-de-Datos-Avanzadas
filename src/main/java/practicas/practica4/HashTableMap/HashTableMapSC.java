@@ -1,10 +1,6 @@
 package practicas.practica4.HashTableMap;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import practicas.practica4.Entry;
 import practicas.practica4.Map;
@@ -17,7 +13,7 @@ import practicas.practica4.Map;
  */
 public class HashTableMapSC<K, V> implements Map<K, V> {
 
-    private static final int DEFAULT_CAPACITY = 1000;
+    private static final int DEFAULT_CAPACITY = 4;
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
     protected int prime;
     protected long scale, shift; // the shift and scaling factors
@@ -51,10 +47,10 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         this.prime = p;
         this.capacity = cap;
         this.bucket = (List<HashEntry<K,V>>[]) new LinkedList[this.capacity]; // safe cast
-        Arrays.fill(bucket, new LinkedList<>());
         Random rand = new Random();
         this.scale = rand.nextInt(prime - 1) + 1;
         this.shift = rand.nextInt(prime);
+        for(int i = 0; i < capacity; ++i) bucket[i] = new LinkedList<>();
     }
 
     /**
@@ -90,7 +86,10 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         if(entry!=null)
             return entry.setValue(value);
 
-        bucket[hashValue(key)].add(new HashEntry<>(key, value));
+        int indexToInsert = hashValue(key);
+        entry = new HashEntry<>(key, value);
+        bucket[indexToInsert].add(entry);
+
         size++;
         return null;
     }
@@ -108,22 +107,37 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        throw new RuntimeException("Not yet implemented.");
+        return new HashTableMapIterator<>(this.bucket, 0);
     }
 
     @Override
     public Iterable<K> keys() {
-        throw new RuntimeException("Not yet implemented.");
+        return new Iterable<K>() {
+            @Override
+            public Iterator<K> iterator() {
+                return new HashTableMapKeyIterator<K, V>(new HashTableMapIterator<>(bucket, 0));
+            }
+        };
     }
 
     @Override
     public Iterable<V> values() {
-        throw new RuntimeException("Not yet implemented.");
+        return new Iterable<V>() {
+            @Override
+            public Iterator<V> iterator() {
+                return new HashTableMapValueIterator<K, V>(new HashTableMapIterator<>(bucket, 0));
+            }
+        };
     }
 
     @Override
     public Iterable<Entry<K, V>> entries() {
-        throw new RuntimeException("Not yet implemented.");
+        return new Iterable<Entry<K, V>>() {
+            @Override
+            public Iterator<Entry<K, V>> iterator() {
+                return new HashTableMapIterator<>(bucket, 0);
+            }
+        };
     }
 
     /**
@@ -194,47 +208,91 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for(int i = 0; i<bucket.length; ++i) {
+            s.append("[").append(i).append("]:");
+            for (int j = 0; j < bucket[i].size(); ++j)
+                s.append(bucket[i].get(j).value).append(" ");
+            s.append("\n");
+        }
+
+        return s.toString();
+    }
+
     private class HashTableMapIterator<T, U> implements Iterator<Entry<T, U>> {
 
-        private int posMap;
-        private int posChain;
+        private int indexMap;
+        private int indexChain;
         private List<HashEntry<T, U>>[] map;
 
         public HashTableMapIterator(List<HashEntry<T, U>>[] map, int numElems) {
-                this.map = map;
+            this.map = map;
+            this.indexMap = 0;
+            this.indexChain = 0;
+        }
+
+        private void goToNext(int index) {
+            System.out.println("map: " + indexMap + ", chain: " + indexChain);
+
+            int aux = this.indexMap;
+            this.indexMap = index;
+
+            while (map[indexMap].isEmpty()) // Si esta vacio avanzamos al siguiente.
+                ++this.indexMap;
+
+            if(aux == indexMap) {
+                if (indexChain < map[indexMap].size() - 1)
+                    ++indexChain;
+                else {
+                    ++indexMap;
+                    indexChain = -1;
+                    goToNext(indexMap);
+                }
+            }
         }
 
         @Override
         public boolean hasNext() {
-            return true;
+            if(this.indexMap < this.map.length - 1)
+               return true;
+
+            if(this.indexMap == this.map.length - 1)
+                return this.indexChain < this.map[indexMap].size();
+
+            return false;
         }
 
         @Override
         public Entry<T, U> next() {
-            return null;
+            if(hasNext())
+                goToNext(indexMap);
+            return map[indexMap].get(indexChain);
         }
 
         @Override
         public void remove() {
             throw new UnsupportedOperationException("Not implemented.");
         }
-
     }
 
     private class HashTableMapKeyIterator<T, U> implements Iterator<T> {
 
+        HashTableMapIterator<T, U> it;
+
         public HashTableMapKeyIterator(HashTableMapIterator<T, U> it) {
-            throw new RuntimeException("Not yet implemented.");
+            this.it = it;
         }
 
         @Override
         public T next() {
-            throw new RuntimeException("Not yet implemented.");
+            return this.it.next().getKey();
         }
 
         @Override
         public boolean hasNext() {
-            throw new RuntimeException("Not yet implemented.");
+            return this.it.hasNext();
         }
 
         @Override
@@ -245,17 +303,20 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
     private class HashTableMapValueIterator<T, U> implements Iterator<U> {
 
+        HashTableMapIterator<T, U> it;
+
         public HashTableMapValueIterator(HashTableMapIterator<T, U> it) {
-            throw new RuntimeException("Not yet implemented.");
+            this.it = it;
         }
 
         @Override
-        public U next() { throw new RuntimeException("Not yet implemented.");
+        public U next() {
+            return this.it.next().getValue();
         }
 
         @Override
         public boolean hasNext() {
-            throw new RuntimeException("Not yet implemented.");
+            return this.it.hasNext();
         }
 
         @Override

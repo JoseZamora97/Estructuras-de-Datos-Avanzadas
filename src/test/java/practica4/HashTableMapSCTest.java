@@ -200,6 +200,8 @@ class HashTableMapSCTest {
         map.put("Juan", 912127006);
         assertEquals(stringList.size(), map.size());
 
+        System.out.println(map.toString());
+
         for (Entry<String, Integer> entry : map.entries()) {
             assertTrue(stringList.contains(entry.getKey()));
 
@@ -209,7 +211,6 @@ class HashTableMapSCTest {
             assertEquals(output.intValue(), entry.getValue().intValue());
         }
         assertTrue(stringList.isEmpty());
-
     }
 
     @Test
