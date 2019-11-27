@@ -225,12 +225,18 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
         private int indexMap;
         private int indexChain;
+        private int tope;
+
         private List<HashEntry<T, U>>[] map;
 
         public HashTableMapIterator(List<HashEntry<T, U>>[] map, int numElems) {
             this.map = map;
             this.indexMap = 0;
             this.indexChain = 0;
+
+            int tope = map.length - 1;
+            while (map[tope].isEmpty())
+                --tope;
         }
 
         private void goToNext(int index) {
@@ -255,11 +261,11 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
         @Override
         public boolean hasNext() {
-            if(this.indexMap < this.map.length - 1)
-               return true;
 
-            if(this.indexMap == this.map.length - 1)
-                return this.indexChain < this.map[indexMap].size();
+            if(this.indexMap < tope)
+                return true;
+            if(this.indexMap == tope)
+                return indexChain < map[tope].size();
 
             return false;
         }
