@@ -226,59 +226,46 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
     private class HashTableMapIterator<T, U> implements Iterator<Entry<T, U>> {
 
-        private int indexMap;
-        private int indexChain;
-        private int tope;
+        private int index, top;
 
+        private LinkedList<HashEntry<T, U>> queue;
         private List<HashEntry<T, U>>[] map;
 
         public HashTableMapIterator(List<HashEntry<T, U>>[] map) {
             this.map = map;
-            this.indexMap = 0;
-            this.indexChain = -1;
+            this.index = 0;
+            this.top = map.length - 1;
 
-            this.tope = map.length - 1;
-            while (map[this.tope].isEmpty())
-                --this.tope;
+            while(this.map[index].isEmpty())
+                ++index;
 
-            goToNext(0);
-        }
+            while(this.map[top].isEmpty())
+                --top;
 
-        private void goToNext(int index) {
-            System.out.println("map: " + indexMap + ", chain: " + indexChain);
-
-            int aux = this.indexMap = index;
-
-            while (map[indexMap].isEmpty())
-                ++this.indexMap;
-
-            if(aux == indexMap) {
-                if (indexChain < map[indexMap].size() - 1)
-                    ++indexChain;
-                else {
-                    ++indexMap;
-                    indexChain = -1;
-                    goToNext(indexMap);
-                }
-            }
+            queue = new LinkedList<>();
+            queue.addAll(this.map[index]);
         }
 
         @Override
         public boolean hasNext() {
-
-            if(this.indexMap < tope)
-                return true;
-            if(this.indexMap == tope)
-                return indexChain < map[tope].size() - 1;
-
-            return false;
+            return !queue.isEmpty();
         }
 
         @Override
         public Entry<T, U> next() {
-            Entry<T, U> entry = map[indexMap].get(indexChain);
-            if(hasNext())
-                goToNext(indexMap);
+            Entry<T, U> entry = queue.removeFirst();
+            if(queue.isEmpty()) {
+                while (index < top) {
+                    ++index;
+                    if(this.map[index].isEmpty())
+                        ++index;
+                    else {
+                        queue.addAll(this.map[index]);
+                        break;
+                    }
+                }
+            }
+
             return entry;
         }
 

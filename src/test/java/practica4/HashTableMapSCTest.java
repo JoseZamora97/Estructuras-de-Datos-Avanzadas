@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 
 import practicas.practica4.Entry;
-import practicas.practica4.HashTableMap.HashTableMapQP;
 import practicas.practica4.HashTableMap.HashTableMapSC;
 import practicas.practica4.Map;
 
@@ -33,7 +32,8 @@ class HashTableMapSCTest {
     }
 
     public <K,V> Map<K, V> newTestMapInstance(int capacity) {
-        return new HashTableMapQP<>(capacity);
+        HashTableMapSC<K, V> map = new HashTableMapSC<>(capacity);
+        return map;
     }
 
     @BeforeEach
@@ -154,7 +154,10 @@ class HashTableMapSCTest {
         map.put("Juan", 912127006);
         assertEquals(list.size(), map.size());
 
+        System.out.println(map.toString());
+
         for (String s : map.keys()) {
+            System.out.println(s);
             assertTrue(list.contains(s));
             list.remove(s);
         }
@@ -176,7 +179,10 @@ class HashTableMapSCTest {
         map.put("Juan", 912127006);
         assertEquals(list.size(), map.size());
 
+        System.out.println(map.toString());
+
         for (Integer integer : map.values()) {
+            System.out.println(integer);
             assertTrue(list.contains(integer));
             list.remove(integer);
         }
@@ -200,11 +206,11 @@ class HashTableMapSCTest {
         map.put("Juan", 912127006);
         assertEquals(stringList.size(), map.size());
 
-        for (Entry<String, Integer> entry : map.entries()) {
-            assertTrue(stringList.contains(entry.getKey()));
+        System.out.println(map.toString());
 
-            System.out.println(entry.getKey());
-            System.out.println(map.toString());
+        for (Entry<String, Integer> entry : map.entries()) {
+            System.out.println(entry.getValue());
+            assertTrue(stringList.contains(entry.getKey()));
 
             int indexOfKey = stringList.indexOf(entry.getKey());
             stringList.remove(indexOfKey);
@@ -216,6 +222,9 @@ class HashTableMapSCTest {
 
     @Test
     void rehash() {
+
+        System.out.println(map.toString());
+
         map = newTestMapInstance(100);
         int n = 1000;
         for (int i = 0; i < n; i++) {
