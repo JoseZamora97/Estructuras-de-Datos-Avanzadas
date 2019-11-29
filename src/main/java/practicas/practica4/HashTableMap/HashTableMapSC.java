@@ -1,6 +1,9 @@
 package practicas.practica4.HashTableMap;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import practicas.practica4.Entry;
 import practicas.practica4.Map;
@@ -107,7 +110,7 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        return new HashTableMapIterator<>(this.bucket, 0);
+        return new HashTableMapIterator<>(this.bucket);
     }
 
     @Override
@@ -115,7 +118,7 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         return new Iterable<K>() {
             @Override
             public Iterator<K> iterator() {
-                return new HashTableMapKeyIterator<K, V>(new HashTableMapIterator<>(bucket, 0));
+                return new HashTableMapKeyIterator<K, V>(new HashTableMapIterator<>(bucket));
             }
         };
     }
@@ -125,7 +128,7 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         return new Iterable<V>() {
             @Override
             public Iterator<V> iterator() {
-                return new HashTableMapValueIterator<K, V>(new HashTableMapIterator<>(bucket, 0));
+                return new HashTableMapValueIterator<K, V>(new HashTableMapIterator<>(bucket));
             }
         };
     }
@@ -135,7 +138,7 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         return new Iterable<Entry<K, V>>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
-                return new HashTableMapIterator<>(bucket, 0);
+                return new HashTableMapIterator<>(bucket);
             }
         };
     }
@@ -229,23 +232,24 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
         private List<HashEntry<T, U>>[] map;
 
-        public HashTableMapIterator(List<HashEntry<T, U>>[] map, int numElems) {
+        public HashTableMapIterator(List<HashEntry<T, U>>[] map) {
             this.map = map;
             this.indexMap = 0;
-            this.indexChain = 0;
+            this.indexChain = -1;
 
-            int tope = map.length - 1;
-            while (map[tope].isEmpty())
-                --tope;
+            this.tope = map.length - 1;
+            while (map[this.tope].isEmpty())
+                --this.tope;
+
+            goToNext(0);
         }
 
         private void goToNext(int index) {
             System.out.println("map: " + indexMap + ", chain: " + indexChain);
 
-            int aux = this.indexMap;
-            this.indexMap = index;
+            int aux = this.indexMap = index;
 
-            while (map[indexMap].isEmpty()) // Si esta vacio avanzamos al siguiente.
+            while (map[indexMap].isEmpty())
                 ++this.indexMap;
 
             if(aux == indexMap) {
@@ -265,16 +269,17 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
             if(this.indexMap < tope)
                 return true;
             if(this.indexMap == tope)
-                return indexChain < map[tope].size();
+                return indexChain < map[tope].size() - 1;
 
             return false;
         }
 
         @Override
         public Entry<T, U> next() {
+            Entry<T, U> entry = map[indexMap].get(indexChain);
             if(hasNext())
                 goToNext(indexMap);
-            return map[indexMap].get(indexChain);
+            return entry;
         }
 
         @Override
