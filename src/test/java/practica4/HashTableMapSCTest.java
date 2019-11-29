@@ -32,8 +32,7 @@ class HashTableMapSCTest {
     }
 
     public <K,V> Map<K, V> newTestMapInstance(int capacity) {
-        HashTableMapSC<K, V> map = new HashTableMapSC<>(capacity);
-        return map;
+        return new HashTableMapSC<>(capacity);
     }
 
     @BeforeEach
@@ -154,10 +153,7 @@ class HashTableMapSCTest {
         map.put("Juan", 912127006);
         assertEquals(list.size(), map.size());
 
-        System.out.println(map.toString());
-
         for (String s : map.keys()) {
-            System.out.println(s);
             assertTrue(list.contains(s));
             list.remove(s);
         }
@@ -179,15 +175,11 @@ class HashTableMapSCTest {
         map.put("Juan", 912127006);
         assertEquals(list.size(), map.size());
 
-        System.out.println(map.toString());
-
         for (Integer integer : map.values()) {
-            System.out.println(integer);
             assertTrue(list.contains(integer));
             list.remove(integer);
         }
         assertTrue(list.isEmpty());
-
     }
 
     @Test
@@ -206,10 +198,7 @@ class HashTableMapSCTest {
         map.put("Juan", 912127006);
         assertEquals(stringList.size(), map.size());
 
-        System.out.println(map.toString());
-
         for (Entry<String, Integer> entry : map.entries()) {
-            System.out.println(entry.getValue());
             assertTrue(stringList.contains(entry.getKey()));
 
             int indexOfKey = stringList.indexOf(entry.getKey());
@@ -222,9 +211,6 @@ class HashTableMapSCTest {
 
     @Test
     void rehash() {
-
-        System.out.println(map.toString());
-
         map = newTestMapInstance(100);
         int n = 1000;
         for (int i = 0; i < n; i++) {
@@ -282,7 +268,6 @@ class HashTableMapSCTest {
         }
 
     }
-
 
     @Test
     void forced_collitions(){

@@ -14,13 +14,15 @@ import practicas.practica4.Map;
  *
  * @author A. Duarte, J. Vélez, J. Sánchez-Oro, JD. Quintana
  */
+@SuppressWarnings("unchecked")
 public class HashTableMapSC<K, V> implements Map<K, V> {
 
-    private static final int DEFAULT_CAPACITY = 4;
+    private static final int DEFAULT_CAPACITY = 2;
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
+
     protected int prime;
-    protected long scale, shift; // the shift and scaling factors
-    private double maxLoadFactor;
+    protected long scale, shift;
+
     private int capacity, threshold, size = 0;
     private List<HashEntry<K,V >>[] bucket;
 
@@ -49,10 +51,13 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
     public HashTableMapSC(int p, int cap) {
         this.prime = p;
         this.capacity = cap;
-        this.bucket = (List<HashEntry<K,V>>[]) new LinkedList[this.capacity]; // safe cast
+        this.threshold = (int) (cap * DEFAULT_LOAD_FACTOR);
+        this.bucket = (List<HashEntry<K,V>>[]) new LinkedList[Math.max(cap, DEFAULT_CAPACITY)];
+
         Random rand = new Random();
         this.scale = rand.nextInt(prime - 1) + 1;
         this.shift = rand.nextInt(prime);
+
         for(int i = 0; i < capacity; ++i) bucket[i] = new LinkedList<>();
     }
 
@@ -93,6 +98,9 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         entry = new HashEntry<>(key, value);
         bucket[indexToInsert].add(entry);
 
+        if((size + 1) > threshold)
+            rehash(capacity * 2);
+
         size++;
         return null;
     }
@@ -115,32 +123,17 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
 
     @Override
     public Iterable<K> keys() {
-        return new Iterable<K>() {
-            @Override
-            public Iterator<K> iterator() {
-                return new HashTableMapKeyIterator<K, V>(new HashTableMapIterator<>(bucket));
-            }
-        };
+        return () -> new HashTableMapKeyIterator<K, V>(new HashTableMapIterator<>(bucket));
     }
 
     @Override
     public Iterable<V> values() {
-        return new Iterable<V>() {
-            @Override
-            public Iterator<V> iterator() {
-                return new HashTableMapValueIterator<K, V>(new HashTableMapIterator<>(bucket));
-            }
-        };
+        return () -> new HashTableMapValueIterator<K, V>(new HashTableMapIterator<>(bucket));
     }
 
     @Override
     public Iterable<Entry<K, V>> entries() {
-        return new Iterable<Entry<K, V>>() {
-            @Override
-            public Iterator<Entry<K, V>> iterator() {
-                return new HashTableMapIterator<>(bucket);
-            }
-        };
+        return () -> new HashTableMapIterator<>(bucket);
     }
 
     /**
@@ -149,7 +142,6 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
      * @param k Key
      */
     private HashEntry<K,V> checkKey(K k) {
-        // We cannot check the second test (i.e., k instanceof K) since we do not know the class K
         if (k == null)
             throw new IllegalStateException("Invalid key: null.");
 
@@ -165,7 +157,26 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
      * Increase/reduce the size of the hash table and rehashes all the entries.
      */
     protected void rehash(int newCap) {
-        throw new RuntimeException("Not yet implemented.");
+
+        this.capacity = newCap;
+        this.threshold = (int) (this.capacity * DEFAULT_LOAD_FACTOR);
+
+        List<HashEntry<K, V>>[] newBucket = new LinkedList[capacity];
+        for(int i = 0; i < newBucket.length; ++i) newBucket[i] = new LinkedList<>();
+
+        for(int i = 0; i < bucket.length; ++i) {
+            if (!bucket[i].isEmpty()) {
+                for(HashEntry<K,V> entry : bucket[i]) {
+                    int index = hashValue(entry.getKey());
+                    newBucket[index].add(entry);
+                }
+            }
+
+            bucket[i].clear();
+            bucket[i] = null;
+        }
+
+        bucket = newBucket;
     }
 
     private static class HashEntry<T, U> implements Entry<T, U> {
@@ -254,16 +265,12 @@ public class HashTableMapSC<K, V> implements Map<K, V> {
         @Override
         public Entry<T, U> next() {
             Entry<T, U> entry = queue.removeFirst();
-            if(queue.isEmpty()) {
-                while (index < top) {
-                    ++index;
-                    if(this.map[index].isEmpty())
-                        ++index;
-                    else {
-                        queue.addAll(this.map[index]);
-                        break;
-                    }
-                }
+            while(index<top && queue.isEmpty()) {
+                ++index;
+                if(map[index].isEmpty())
+                    continue;
+
+                queue.addAll(map[index]);
             }
 
             return entry;
