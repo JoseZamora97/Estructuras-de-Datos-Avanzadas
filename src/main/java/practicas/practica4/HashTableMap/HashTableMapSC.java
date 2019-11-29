@@ -12,7 +12,7 @@ import practicas.practica4.Map;
  * Separate chaining table implementation of hash tables. Note that all
  * "matching" is based on the equals method.
  *
- * @author A. Duarte, J. Vélez, J. Sánchez-Oro, JD. Quintana
+ * @author Jose Miguel Zamora Batista.
  */
 @SuppressWarnings("unchecked")
 public class HashTableMapSC<K, V> implements Map<K, V> {
