@@ -1,16 +1,14 @@
 package practicas.practica4.usecase;
 
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import practicas.practica4.HashTableMap.HashTableMapSC;
-import practicas.practica4.Map;
+import java.util.Map;
 
 public class FlightManager {
 
-    private Map<Passenger, Seat> passengers = new HashTableMapSC<>();
-    private Map<FlightKey, Flight> flights = new HashTableMapSC<>();
+    private Map<Passenger, FlightKey> passengers = new HashMap<>();
+    private Map<FlightKey, Flight> flights = new HashMap<>();
 
     public Flight addFlight(String company, int flightCode, int year, int month, int day) {
         FlightKey fKey = new FlightKey(company, flightCode, year, month, day);
@@ -43,55 +41,56 @@ public class FlightManager {
         if(f == null)
             throw new RuntimeException("The flight doesn't exists and can't be updated.");
 
+        if(!uFlight.getFlightKey().equals(fKey)) {
+            fKey = uFlight.getFlightKey();
+
+            if(flights.get(fKey) != null)
+                throw new RuntimeException("The new flight identifiers are already in use.");
+
+            flights.remove(f.getFlightKey());
+            flights.put(fKey, f);
+        }
+
         f.update(uFlight);
+
     }
 
     public void addPassenger(String dni, String name, String surname, Flight flight) {
         FlightKey fKey = flight.getFlightKey();
-        Flight f = flights.get(fKey);
-        if(f == null)
+
+        if(flights.get(fKey) == null)
             throw new RuntimeException("The flight doesn't exits.");
+
         if(flight.getCapacity() == 0)
             throw new RuntimeException("This flight doesn't have capacity for more passengers.");
 
         Passenger p = new Passenger(dni, name, surname);
-        Seat s = passengers.get(p);
+        if(!passengers.containsKey(p))
+            flight.setCapacity(flight.getCapacity()-1);
+        else
+            passengers.remove(p);
 
-        if(s != null) {
-            s.passenger = new Passenger(p);
-            passengers.put(p, s);
-        }
-        else {
-            passengers.put(p, new Seat(p, flight));
-            flight.setCapacity(flight.getCapacity() - 1);
-        }
-
-        updateFlight(flight.getCompany(), flight.getFlightCode(), flight.getYear(),
-                flight.getMonth(), flight.getDay(), flight);
-
+        passengers.put(p, fKey);
+        updateFlight(fKey.getCompany(), fKey.getFlightCode(), fKey.getYear(),
+                fKey.getMonth(), fKey.getDay(), flight);
     }
 
     public Iterable<Passenger> getPassengers(String company, int flightCode, int year, int month, int day) {
-        FlightKey fKey = new Flight(company, flightCode, year, month, day);
-        Flight f = flights.get(fKey);
-        if(f == null)
+        FlightKey fKey = new FlightKey(company, flightCode, year, month, day);
+        if(!flights.containsKey(fKey))
             throw new RuntimeException("The flight doesn't exists.");
 
-        List<Passenger> passengersList = new ArrayList<>();
-        for(Seat s : passengers.values())
-            if(s.flight.equals(f))
-                passengersList.add(s.passenger);
+        List<Passenger> pList = new ArrayList<>();
+        for(Map.Entry<Passenger, FlightKey> e : passengers.entrySet())
+            if(e.getValue().equals(fKey))
+                pList.add(e.getKey());
 
-        return passengersList;
-    }
-
-    private class Seat {
-        private Passenger passenger;
-        private Flight flight;
-        public Seat(Passenger passenger, Flight flight) {
-            this.passenger = passenger;
-            this.flight = flight;
-        }
+        return pList;
+//        return passengers.entrySet()
+//                .stream()
+//                .filter(x -> x.getValue().equals(fKey))
+//                .map(Map.Entry::getKey)
+//                .collect(Collectors.toList());
     }
 
     public Iterable<Flight> flightsByDate(int year, int month, int day) {
