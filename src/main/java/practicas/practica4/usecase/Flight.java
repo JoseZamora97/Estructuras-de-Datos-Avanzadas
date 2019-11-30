@@ -144,12 +144,14 @@ public class Flight {
         Flight flight = (Flight) o;
         return getFlightCode() == flight.getFlightCode() &&
                 getCompany().equals(flight.getCompany()) &&
-                date.equals(flight.date);
+                getYear() == flight.getYear() &&
+                getMonth() == flight.getMonth() &&
+                getDay() == flight.getDay();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCompany(), getFlightCode(), date);
+        return Objects.hash(getCompany(), getFlightCode(), getYear(), getMonth(), getDay());
     }
 
     @Override

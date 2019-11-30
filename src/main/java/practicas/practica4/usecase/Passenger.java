@@ -8,6 +8,23 @@ public class Passenger {
     private String name;
     private String surname;
 
+    public Passenger(String dni, String name, String surname) {
+        this.dni = dni;
+        this.name = name;
+        this.surname = surname;
+    }
+
+    public Passenger(Passenger p) {
+        this(p.dni, p.name, p.surname);
+    }
+
+    public Passenger(){}
+
+    @Override
+    public String toString() {
+        return dni + " " + name + " " + surname; // EX: 09409833G A A
+    }
+
     public String getDNI() {
         return dni;
     }
