@@ -1,13 +1,12 @@
 package practicas.practica4.usecase;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FlightManager {
 
-    private Map<Passenger, FlightKey> passengers = new HashMap<>();
+    private Map<Passenger, Flight> passengers = new HashMap<>();
     private Map<FlightKey, Flight> flights = new HashMap<>();
 
     public Flight addFlight(String company, int flightCode, int year, int month, int day) {
@@ -43,7 +42,6 @@ public class FlightManager {
 
         if(!uFlight.getFlightKey().equals(fKey)) {
             fKey = uFlight.getFlightKey();
-
             if(flights.get(fKey) != null)
                 throw new RuntimeException("The new flight identifiers are already in use.");
 
@@ -52,13 +50,12 @@ public class FlightManager {
         }
 
         f.update(uFlight);
-
     }
 
     public void addPassenger(String dni, String name, String surname, Flight flight) {
         FlightKey fKey = flight.getFlightKey();
 
-        if(flights.get(fKey) == null)
+        if(!flights.containsKey(fKey))
             throw new RuntimeException("The flight doesn't exits.");
 
         if(flight.getCapacity() == 0)
@@ -70,7 +67,7 @@ public class FlightManager {
         else
             passengers.remove(p);
 
-        passengers.put(p, fKey);
+        passengers.put(p, flight);
         updateFlight(fKey.getCompany(), fKey.getFlightCode(), fKey.getYear(),
                 fKey.getMonth(), fKey.getDay(), flight);
     }
@@ -80,25 +77,31 @@ public class FlightManager {
         if(!flights.containsKey(fKey))
             throw new RuntimeException("The flight doesn't exists.");
 
-        List<Passenger> pList = new ArrayList<>();
-        for(Map.Entry<Passenger, FlightKey> e : passengers.entrySet())
-            if(e.getValue().equals(fKey))
-                pList.add(e.getKey());
+//        List<Passenger> pList = new ArrayList<>();
+//        for(Map.Entry<Passenger, Flight> e : passengers.entrySet())
+//            if(e.getValue().getFlightKey().equals(fKey))
+//                pList.add(e.getKey());
+//
+//        return pList;
 
-        return pList;
-//        return passengers.entrySet()
-//                .stream()
-//                .filter(x -> x.getValue().equals(fKey))
-//                .map(Map.Entry::getKey)
-//                .collect(Collectors.toList());
+        return passengers.entrySet()
+                .stream()
+                .filter(x -> x.getValue().getFlightKey().equals(fKey))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     public Iterable<Flight> flightsByDate(int year, int month, int day) {
-        throw new RuntimeException("Not yet implemented.");
+        return flights.values().stream()
+                .filter(x -> x.getYear() == year && x.getMonth() == month && x.getDay() == day)
+                .collect(Collectors.toList());
     }
 
     public Iterable<Flight> getFlightsByPassenger(Passenger passenger) {
-        throw new RuntimeException("Not yet implemented.");
+        return passengers.entrySet().stream()
+                .filter(x -> x.getKey().equals(passenger))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 
     public Iterable<Flight> getFlightsByDestination(String destination, int year, int month, int day) {
