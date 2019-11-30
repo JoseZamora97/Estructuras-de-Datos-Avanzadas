@@ -179,7 +179,6 @@ class FlightManagerTest {
 
         Exception e = assertThrows(RuntimeException.class,
                 ()-> manager.updateFlight(companies.get(0), 1200, 2018, 12, 20, flight1));
-
         assertEquals("The new flight identifiers are already in use.", e.getMessage());
 
         flight1.setCompany(companies.get(5));
@@ -218,7 +217,7 @@ class FlightManagerTest {
     @org.junit.jupiter.api.Test
     void getPassengers() {
         manager.addFlight(companies.get(0), 1200, 2018, 12, 20);
-        Flight flight =manager.getFlight(companies.get(0), 1200, 2018, 12, 20);
+        Flight flight = manager.getFlight(companies.get(0), 1200, 2018, 12, 20);
         flight.setCapacity(10);
         manager.updateFlight(companies.get(0), 1200, 2018, 12, 20, flight);
 

@@ -53,4 +53,5 @@ public interface Map<K, V> extends Iterable<Entry<K, V>> {
      * Returns an iterable object containing all the entries in the map.
      */
     Iterable<Entry<K, V>> entries();
+
 }

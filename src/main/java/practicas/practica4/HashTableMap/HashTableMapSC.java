@@ -17,7 +17,7 @@ import practicas.practica4.Map;
 @SuppressWarnings("unchecked")
 public class HashTableMapSC<K, V> implements Map<K, V> {
 
-    private static final int DEFAULT_CAPACITY = 2;
+    private static final int DEFAULT_CAPACITY = 10;
     private static final double DEFAULT_LOAD_FACTOR = 0.75;
 
     protected int prime;

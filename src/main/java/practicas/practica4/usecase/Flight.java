@@ -1,17 +1,12 @@
 package practicas.practica4.usecase;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class Flight {
+public class Flight extends FlightKey{
 
-    private String company;
-    private int flightCode;
-    private LocalDate date;
     private LocalDateTime time;
     private String origin;
     private String destination;
@@ -21,14 +16,17 @@ public class Flight {
     private Map<String, String> properties;
 
     public Flight() {
+        super();
         properties = new ConcurrentHashMap<>();
     }
 
     public Flight(String company, int flightCode, int year, int month, int day) {
-        this.company = company;
-        this.flightCode = flightCode;
-        this.date = LocalDate.of(year, month, day);
+        super(company,flightCode, year, month, day);
         properties = new ConcurrentHashMap<>();
+    }
+
+    public Flight(FlightKey f) {
+        this(f.getCompany(), f.getFlightCode(), f.getYear(), f.getMonth(), f.getDay());
     }
 
     public Flight copy() {
@@ -59,38 +57,6 @@ public class Flight {
 
     public int getMinutes() {
         return time.getMinute();
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    public int getFlightCode() {
-        return flightCode;
-    }
-
-    public void setFlightCode(int flightCode){
-        this.flightCode = flightCode;
-    }
-
-    public void setDate(int year, int month, int day) {
-        this.date = LocalDate.of(year, month, day);
-    }
-
-    public int getYear() {
-        return this.date.getYear();
-    }
-
-    public int getMonth() {
-        return this.date.getMonthValue();
-    }
-
-    public int getDay() {
-        return this.date.getDayOfMonth();
     }
 
     public int getCapacity() {
@@ -138,23 +104,6 @@ public class Flight {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Flight flight = (Flight) o;
-        return getFlightCode() == flight.getFlightCode() &&
-                getCompany().equals(flight.getCompany()) &&
-                getYear() == flight.getYear() &&
-                getMonth() == flight.getMonth() &&
-                getDay() == flight.getDay();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCompany(), getFlightCode(), getYear(), getMonth(), getDay());
-    }
-
-    @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
@@ -179,5 +128,10 @@ public class Flight {
 
     public void update(Flight f) {
         copyFlight(f, this);
+    }
+
+    public FlightKey getFlightKey() {
+        return new FlightKey(this.getCompany(), this.getFlightCode(), this.getYear()
+                , this.getMonth(), this.getDay());
     }
 }
