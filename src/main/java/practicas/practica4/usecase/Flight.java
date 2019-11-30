@@ -1,6 +1,5 @@
 package practicas.practica4.usecase;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -14,7 +13,6 @@ public class Flight {
     private int flightCode;
     private LocalDate date;
     private LocalDateTime time;
-
     private String origin;
     private String destination;
     private int delay;
@@ -35,10 +33,20 @@ public class Flight {
 
     public Flight copy() {
         Flight copy = new Flight();
-        copy.setCompany(company);
-        copy.setFlightCode(flightCode);
-        copy.setDate(getYear(), getMonth(), getDay());
+        copyFlight(this, copy);
         return copy;
+    }
+
+    private void copyFlight(Flight src, Flight dst) {
+        dst.company = src.company;
+        dst.flightCode = src.flightCode;
+        dst.date = src.date;
+        dst.time = src.time;
+        dst.origin = src.origin;
+        dst.destination = src.destination;
+        dst.delay = src.delay;
+        dst.capacity = src.capacity;
+        dst.properties = src.properties;
     }
 
     public void setTime(int hours, int minutes) {
@@ -135,7 +143,8 @@ public class Flight {
         if (o == null || getClass() != o.getClass()) return false;
         Flight flight = (Flight) o;
         return getFlightCode() == flight.getFlightCode() &&
-                getCompany().equals(flight.getCompany());
+                getCompany().equals(flight.getCompany()) &&
+                date.equals(flight.date);
     }
 
     @Override
@@ -167,14 +176,6 @@ public class Flight {
     }
 
     public void update(Flight f) {
-        company = f.company;
-        flightCode = f.flightCode;
-        date = f.date;
-        time = f.time;
-        origin = f.origin;
-        destination = f.destination;
-        delay = f.delay;
-        capacity = f.capacity;
-        properties = f.properties;
+        copyFlight(f, this);
     }
 }

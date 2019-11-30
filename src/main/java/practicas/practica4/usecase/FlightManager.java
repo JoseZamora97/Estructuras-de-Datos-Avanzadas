@@ -3,10 +3,13 @@ package practicas.practica4.usecase;
 import java.util.HashMap;
 import java.util.Map;
 
+//import practicas.practica4.HashTableMap.HashTableMapSC;
+//import practicas.practica4.Map;
 
 public class FlightManager {
 
     private Map<Flight, Flight> flights = new HashMap<>();
+    private Map<Passenger, Flight> passengers = new HashMap<>();
 
     public Flight addFlight(String company, int flightCode, int year, int month, int day) {
         Flight flight = new Flight(company, flightCode, year, month, day);
@@ -28,11 +31,18 @@ public class FlightManager {
         Flight f = flights.get(new Flight(company, flightCode, year, month, day));
         if(f==null)
             throw new RuntimeException("The flight doesn't exists and can't be updated.");
+
+        // TODO: arreglar identificadores.
         f.update(updatedFlightInfo);
     }
 
     public void addPassenger(String dni, String name, String surname, Flight flight) {
-        throw new RuntimeException("Not yet implemented.");
+        Passenger p = new Passenger();
+        p.setDNI(dni);
+        p.setName(name);
+        p.setSurname(surname);
+
+        passengers.put(p, flight);
     }
 
     public Iterable<Passenger> getPassengers(String company, int flightCode, int year, int month, int day) {

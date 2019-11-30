@@ -177,19 +177,21 @@ class FlightManagerTest {
         flight1.setProperty("LUGGAGE", "NO");
         flight1.setDelay(0);
 
-        Exception e = assertThrows(RuntimeException.class, ()-> manager.updateFlight(companies.get(0), 1200, 2018, 12, 20, flight1));
-        assertEquals("The new flight identifiers are already in use.",e.getMessage());
+        Exception e = assertThrows(RuntimeException.class,
+                ()-> manager.updateFlight(companies.get(0), 1200, 2018, 12, 20, flight1));
+
+        assertEquals("The new flight identifiers are already in use.", e.getMessage());
 
         flight1.setCompany(companies.get(5));
         flight1.setFlightCode(704);
         manager.updateFlight(companies.get(0), 1200, 2018, 12, 20, flight1);
         Flight flightUpdated = manager.getFlight(companies.get(5), 704, 2018, 12, 20);
 
-
-        assertEquals(flight1.toString(),flightUpdated.toString());
+        assertEquals(flight1.toString(), flightUpdated.toString());
         assertEquals("20-12-2018\tVLG704\t8:15\tMadrid-Barajas Adolfo Suárez (MAD)\tBarcelona-El Prat (BCN)", flightUpdated.toString());
 
-        e = assertThrows(RuntimeException.class, ()->manager.getFlight(companies.get(0), 1200, 2018, 12, 20));
+        e = assertThrows(RuntimeException.class,
+                ()->manager.getFlight(companies.get(0), 1200, 2018, 12, 20));
         assertEquals("Flight not found.",e.getMessage());
     }
 
@@ -204,7 +206,6 @@ class FlightManagerTest {
         manager.addPassenger("09409833G", "A", "A", flight);
         manager.addPassenger("10202761F", "B", "X", flight);
         manager.addPassenger("10", "C", "Y", flight);
-
 
         Exception e = assertThrows(RuntimeException.class, () -> manager.addPassenger("09409833G", "C", "Y", flight));
         assertEquals("This flight doesn't have capacity for more passengers.", e.getMessage());
