@@ -433,7 +433,6 @@ class FlightManagerTest {
 
         Passenger p1 = newPassenger("10202761F", null, null);
 
-
         Iterable<Flight> flightsByPassenger = manager.getFlightsByPassenger(p1);
         List<Flight> list = this.getSortedFlightsAsList(flightsByPassenger);
         assertEquals(3,list.size());
@@ -515,9 +514,8 @@ class FlightManagerTest {
         expected = "[]";
         assertEquals(expected, list.toString());
 
-        Exception e = assertThrows(RuntimeException.class, ()->{
-            manager.getFlightsByDestination(airport.get(4), 2019, 2, 13);
-        });
+        Exception e = assertThrows(RuntimeException.class, ()->
+                manager.getFlightsByDestination(airport.get(4), 2019, 2, 13));
         assertEquals("The destination doesn't exists.", e.getMessage());
     }
 
@@ -551,7 +549,7 @@ class FlightManagerTest {
         f5.setDestination(airport.get(3));
         f6.setDestination(airport.get(1));
 
-        manager.updateFlight(companies.get(0), 7070, 2019, 1, 31,f1);
+        manager.updateFlight(companies.get(0), 7070,2019,1,31,f1);
         manager.updateFlight(companies.get(1), 7071,2019,1,31,f2);
         manager.updateFlight(companies.get(2), 7070,2019,2,11,f3);
         manager.updateFlight(companies.get(3), 8072,2019,2,11,f4);
@@ -589,6 +587,7 @@ class FlightManagerTest {
         list.sort(Comparator.comparing(p->p.getDNI()));
         return list;
     }
+
     private List<Flight> getSortedFlightsAsList(Iterable<Flight> flights) {
         ArrayList<Flight> list = new ArrayList<>();
         for (Flight flight : flights) {
