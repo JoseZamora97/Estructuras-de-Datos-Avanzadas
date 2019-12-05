@@ -104,7 +104,6 @@ public class FlightQueryTest {
         searchDB.addFlight(f3);
         searchDB.addFlight(f4);
 
-
         output = searchDB.searchByDates(1900, 1, 1, 2020, 12, 31);
         expected = "[6-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
         assertEquals(expected, iterableToString(output));
@@ -139,7 +138,6 @@ public class FlightQueryTest {
         expected = "[31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG)]";
         assertEquals(expected, iterableToString(output));
 
-
         searchDB.addFlight(f8);
         searchDB.addFlight(f9);
         searchDB.addFlight(f10);
@@ -147,7 +145,7 @@ public class FlightQueryTest {
         searchDB.addFlight(f12);
 
         output = searchDB.searchByDates(2018, 12, 7, 2018, 12, 7);
-        expected = "[7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tDAL401\tBOGOTA /EL DORADO (BOG), 7-12-2018\tDAL402\tLISBOA (LIS)]";
+        expected = "[7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL401\tBOGOTA /EL DORADO (BOG), 7-12-2018\tDAL402\tLISBOA (LIS)]";
         assertEquals(expected, iterableToString(output));
 
     }
@@ -191,7 +189,7 @@ public class FlightQueryTest {
         assertEquals("Invalid range. (min>max)",e.getMessage());
 
         output = searchDB.searchByDestinations("", Character.MAX_VALUE + "");
-        expected = "[7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
+        expected = "[6-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
         assertEquals(expected, iterableToString(output));
 
         output = searchDB.searchByDestinations("A", "H");
@@ -200,20 +198,17 @@ public class FlightQueryTest {
         assertFalse(output.iterator().hasNext());
         assertEquals(expected, iterableToString(output));
 
-
         output = searchDB.searchByDestinations("L", "P"+Character.MAX_VALUE);
-        expected = "[7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
+        expected = "[6-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
         assertEquals(expected, iterableToString(output));
-
 
         searchDB.addFlight(f5);
         searchDB.addFlight(f6);
         searchDB.addFlight(f7);
 
         output = searchDB.searchByDestinations("PARIS", "PARIS"+Character.MAX_VALUE);
-        expected = "[17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
+        expected = "[31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
         assertEquals(expected, iterableToString(output));
-
 
         searchDB.addFlight(f8);
         searchDB.addFlight(f9);
@@ -222,11 +217,11 @@ public class FlightQueryTest {
         searchDB.addFlight(f12);
 
         output = searchDB.searchByDestinations("LONDRES", "LONDRES"+Character.MAX_VALUE);
-        expected = "[7-12-2018\tDAL402\tLONDRES /GATWICK (LGW), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL401\tLONDRES /HEATHROW (LHR), 7-1-2011\tDAL413\tLONDRES /LUTON (LTN), 7-12-2019\tDAL403\tLONDRES /STANSTED (STN)]";
+        expected = "[7-1-2011\tDAL413\tLONDRES /LUTON (LTN), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL401\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL402\tLONDRES /GATWICK (LGW), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2019\tDAL403\tLONDRES /STANSTED (STN)]";
         assertEquals(expected, iterableToString(output));
 
         output = searchDB.searchByDestinations("", Character.MAX_VALUE + "");
-        expected = "[7-12-2018\tDAL402\tLONDRES /GATWICK (LGW), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL401\tLONDRES /HEATHROW (LHR), 7-1-2011\tDAL413\tLONDRES /LUTON (LTN), 7-12-2019\tDAL403\tLONDRES /STANSTED (STN), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
+        expected = "[7-1-2011\tDAL413\tLONDRES /LUTON (LTN), 31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL401\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL402\tLONDRES /GATWICK (LGW), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 31-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2019\tDAL403\tLONDRES /STANSTED (STN)]";
         assertEquals(expected, iterableToString(output));
     }
 
@@ -266,7 +261,7 @@ public class FlightQueryTest {
         searchDB.addFlight(f4);
 
         output = searchDB.searchByCompanyAndFLightCode(companies.get(1),0,companies.get(1), Integer.MAX_VALUE);
-        expected = "[7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
+        expected = "[6-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
         assertEquals(expected, iterableToString(output));
 
         RuntimeException e = assertThrows(RuntimeException.class, () -> searchDB.searchByCompanyAndFLightCode("B", 330, "A",770));

@@ -19,15 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BinarySearchTreeTest {
+public class AVLTreeTest {
 
     BinarySearchTree<Integer> b;
 
     public BinarySearchTree<Integer> newBST(){
-        //TODO: Aqui se define la implementacion a comprobar
-//        return new LinkedBinarySearchTree<>();
-//        return new AVLTree<>();
-        return new RBTree<>();
+       return new AVLTree<>();
     }
 
 

@@ -1,10 +1,14 @@
 package practicas.practica5.binarysearchtree;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import practicas.Position;
 import practicas.practica3.bynarytree.LinkedBinaryTree;
@@ -241,24 +245,40 @@ public class LinkedBinarySearchTree <E> implements BinarySearchTree<E> {
 
 
     public Position<E> first() throws RuntimeException {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
+        if(this.size() == 0)
+            throw new RuntimeException("No first element.");
+        return iterator().next();
     }
 
     public Position<E> last() throws RuntimeException {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
+        if(this.size == 0)
+            throw new RuntimeException("No last element.");
+
+        LinkedList<Position<E>> it = new LinkedList<>();
+        iterator().forEachRemaining(it::add);
+        return it.getLast();
     }
 
     public Iterable<Position<E>> successors(Position<E> pos) {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
+        List<Position<E>> iterable = new LinkedList<>();
+        for (Position<E> position : this)
+            if(comparator.compare(pos.getElement(), position.getElement()) <= 0)
+                iterable.add(position);
 
+        return iterable;
     }
 
     public Iterable<Position<E>> predecessors(Position<E> pos) {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
+        LinkedList<Position<E>> iterable = new LinkedList<>();
+        for (Position<E> position : this)
+            if(comparator.compare(pos.getElement(), position.getElement()) >= 0)
+                iterable.add(position);
+
+        return iterable.stream().collect(Collector.of(
+                ArrayDeque::new,
+                ArrayDeque::addFirst,
+                (d1, d2) -> {d2.addAll(d1); return d2;}
+        ));
     }
 
     private class BSTIterator<T> implements Iterator<Position<T>> {

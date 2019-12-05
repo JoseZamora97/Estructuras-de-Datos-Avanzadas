@@ -199,24 +199,25 @@ public class AVLTree<E> implements BinarySearchTree<E> {
     }
 
     public Position<E> first() throws RuntimeException {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
+        return bst.first().getElement();
     }
 
     public Position<E> last() throws RuntimeException {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
+        return bst.last().getElement();
     }
 
     public Iterable<Position<E>> successors(Position<E> pos) {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
-
+        List<Position<E>> iterable  = new LinkedList<>();
+        bst.successors(bst.find(checkPosition(pos)))
+                .forEach(p -> iterable.add(this.find(p.getElement().element)));
+        return iterable;
     }
 
     public Iterable<Position<E>> predecessors(Position<E> pos) {
-        //TODO: Practica 5 Ejercicio 2
-        throw new RuntimeException("Not yet implemented.");
+        List<Position<E>> iterable  = new LinkedList<>();
+        bst.predecessors(bst.find(checkPosition(pos)))
+                .forEach(p -> iterable.add(this.find(p.getElement().element)));
+        return iterable;
     }
 
     //We need this class to store the height of each BTNode

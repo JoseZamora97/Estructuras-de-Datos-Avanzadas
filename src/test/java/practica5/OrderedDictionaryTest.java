@@ -14,6 +14,7 @@ import practicas.practica5.dictionary.OrderedDictionary;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrderedDictionaryTest {
@@ -107,7 +108,11 @@ public class OrderedDictionaryTest {
 
     @Test
     void findRange() {
-        throw new RuntimeException("Not implemented.");
+        Exception e = assertThrows(RuntimeException.class, () ->
+        {
+            throw new RuntimeException("Not implemented.");
+        });
+        assertEquals("Not implemented.", e.getMessage());
     }
 
 }
