@@ -565,11 +565,11 @@ class FlightManagerTest {
         f6.setDestination(airport.get(4));
         manager.updateFlight(companies.get(5), 9070,2019,2,13,f6);
 
-//        flights = manager.getFlightsByDestination(airport.get(1), 2019, 2, 13);
-//        list = this.getSortedFlightsAsList(flights);
-//        assertEquals(0,list.size());
-//        expected = "[]";
-//        assertEquals(expected, list.toString());
+        flights = manager.getFlightsByDestination(airport.get(1), 2019, 2, 13);
+        list = this.getSortedFlightsAsList(flights);
+        assertEquals(0,list.size());
+        expected = "[]";
+        assertEquals(expected, list.toString());
 
         flights = manager.getFlightsByDestination(airport.get(4), 2019, 2, 13);
         list = this.getSortedFlightsAsList(flights);

@@ -3,6 +3,7 @@ package practicas.practica5.binarysearchtree;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import practicas.Position;
@@ -236,8 +237,15 @@ public class RBTree <E> implements BinarySearchTree<E> {
     }
 
     public Iterable<Position<E>> findRange(E minValue, E maxValue) throws RuntimeException {
-        //TODO: Practica 5 Ejercicio 1
-        throw new RuntimeException("Not yet implemented.");
+        RBInfo<E> min = new RBInfo<>(minValue);
+        RBInfo<E> max = new RBInfo<>(maxValue);
+
+        Iterable<Position<RBTree<E>.RBInfo<E>>> it = bst.findRange(min, max);
+        List<Position<E>> iterable  = new LinkedList<>();
+        for (Position<RBTree<E>.RBInfo<E>> i : it)
+            iterable.add(i.getElement());
+
+        return iterable;
     }
 
     public Position<E> first() throws RuntimeException {

@@ -7,8 +7,10 @@ import java.util.Comparator;
 import java.util.Random;
 
 import practicas.Position;
+import practicas.practica5.binarysearchtree.AVLTree;
 import practicas.practica5.binarysearchtree.BinarySearchTree;
 import practicas.practica5.binarysearchtree.LinkedBinarySearchTree;
+import practicas.practica5.binarysearchtree.RBTree;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,9 +25,9 @@ public class BinarySearchTreeTest {
 
     public BinarySearchTree<Integer> newBST(){
         //TODO: Aqui se define la implementacion a comprobar
-        return new LinkedBinarySearchTree<>();
+//        return new LinkedBinarySearchTree<>();
 //        return new AVLTree<>();
-//        return new RBTree<>();
+        return new RBTree<>();
     }
 
 
@@ -225,8 +227,6 @@ public class BinarySearchTreeTest {
 
 
     }
-
-
 
     @Test
     void size() {

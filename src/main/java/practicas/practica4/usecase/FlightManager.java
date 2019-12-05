@@ -102,15 +102,25 @@ public class FlightManager {
     }
 
     public Iterable<Flight> getFlightsByDestination(String destination, int year, int month, int day) {
+
+        List<Flight> flightsAtDate = flights.values().stream()
+                .filter(flight -> flight.getYear() == year &&
+                        flight.getMonth() == month &&
+                        flight.getDay() == day)
+                .collect(Collectors.toList());
+
         List<Flight> flightsByDestination = flights.values().stream()
                 .filter(flight -> flight.getDestination().equals(destination))
                 .collect(Collectors.toList());
 
+        if(flightsAtDate.isEmpty())
+            return new ArrayList<>();
+
         if(flightsByDestination.isEmpty())
             throw new RuntimeException("The destination doesn't exists.");
 
-        return flightsByDestination.stream()
-                .filter(x -> x.getYear() == year && x.getMonth() == month && x.getDay() == day)
+        return flightsAtDate.stream()
+                .filter(flightsByDestination::contains)
                 .collect(Collectors.toList());
     }
 }

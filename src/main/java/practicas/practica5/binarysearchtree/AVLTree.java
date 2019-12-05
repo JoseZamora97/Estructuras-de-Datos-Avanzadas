@@ -3,6 +3,7 @@ package practicas.practica5.binarysearchtree;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import practicas.Position;
@@ -186,8 +187,15 @@ public class AVLTree<E> implements BinarySearchTree<E> {
     }
 
     public Iterable<Position<E>> findRange(E minValue, E maxValue) throws RuntimeException {
-        //TODO: Practica 5 Ejercicio 1
-        throw new RuntimeException("Not yet implemented.");
+        AVLInfo<E> min = new AVLInfo<>(minValue);
+        AVLInfo<E> max = new AVLInfo<>(maxValue);
+
+        Iterable<Position<AVLTree<E>.AVLInfo<E>>> it = bst.findRange(min, max);
+        List<Position<E>> iterable  = new LinkedList<>();
+        for (Position<AVLTree<E>.AVLInfo<E>> i : it)
+            iterable.add(i.getElement());
+
+        return iterable;
     }
 
     public Position<E> first() throws RuntimeException {

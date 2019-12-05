@@ -3,6 +3,7 @@ package practicas.practica5.binarysearchtree;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import practicas.Position;
@@ -164,9 +165,11 @@ public class LinkedBinarySearchTree <E> implements BinarySearchTree<E> {
 
         if (this.binTree.isLeaf(this.binTree.left(remPos))) {
             remPos = this.binTree.left(remPos); // left easy case
-        } else if (this.binTree.isLeaf(this.binTree.right(remPos))) {
+        }
+        else if (this.binTree.isLeaf(this.binTree.right(remPos))) {
             remPos = this.binTree.right(remPos); // right easy case
-        } else { // entry is at a node with internal children
+        }
+        else { // entry is at a node with internal children
             Position<E> swapPos = remPos; // find node for moving
             // entry
             remPos = this.binTree.right(swapPos);
@@ -195,7 +198,7 @@ public class LinkedBinarySearchTree <E> implements BinarySearchTree<E> {
 
     /** Returns an iterator of the elements stored at the nodes. */
     public Iterator<Position<E>>  iterator() {
-        return new BSTIterator<E>(this);
+        return new BSTIterator<>(this);
     }
 
     /**
@@ -223,24 +226,19 @@ public class LinkedBinarySearchTree <E> implements BinarySearchTree<E> {
     }
 
     public Iterable<Position<E>> findRange(E minValue, E maxValue) throws RuntimeException {
-        Position<E> min = treeSearch(minValue, this.binTree.root());
-        Position<E> max = treeSearch(maxValue, this.binTree.root());
 
         if(comparator.compare(minValue, maxValue) > 0)
             throw new RuntimeException("Invalid range. (min>max)");
 
-        InorderBinaryTreeIterator<E> it = new InorderBinaryTreeIterator<>(this.binTree, min);
-        List<Position<E>> iterable = new ArrayList<>();
-
-        while(it.hasNext()) {
-            Position<E> position = it.next();
-            if(position.getElement() != null)
-                if(comparator.compare(position.getElement(), maxValue ) <= 0)
-                    iterable.add(position);
-        }
+        List<Position<E>> iterable = new LinkedList<>();
+        for (Position<E> position : this)
+            if (comparator.compare(position.getElement(), minValue) >= 0
+                    && comparator.compare(position.getElement(), maxValue) <= 0)
+                iterable.add(position);
 
         return iterable;
     }
+
 
     public Position<E> first() throws RuntimeException {
         //TODO: Practica 5 Ejercicio 2
