@@ -267,7 +267,7 @@ public class FlightQueryTest {
         RuntimeException e = assertThrows(RuntimeException.class, () -> searchDB.searchByCompanyAndFLightCode("B", 330, "A",770));
         assertEquals("Invalid range. (min>max)",e.getMessage());
 
-        e = assertThrows(RuntimeException.class, () -> searchDB.searchByCompanyAndFLightCode("A", 100, "A",0));
+         e = assertThrows(RuntimeException.class, () -> searchDB.searchByCompanyAndFLightCode("A", 100, "A",0));
         assertEquals("Invalid range. (min>max)",e.getMessage());
 
         output = searchDB.searchByCompanyAndFLightCode("H",0,"Z", Integer.MAX_VALUE);
@@ -284,15 +284,15 @@ public class FlightQueryTest {
         searchDB.addFlight(f12);
 
         output = searchDB.searchByCompanyAndFLightCode("A",0,"A"+Character.MAX_VALUE, Integer.MAX_VALUE);
-        expected = "[31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
+        expected = "[31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 31-12-2018\tAV770\tPARIS /ORLY (ORY)]";
         assertEquals(expected, iterableToString(output));
 
         output = searchDB.searchByCompanyAndFLightCode("", 0,Character.MAX_VALUE + "", Integer.MAX_VALUE);
-        expected = "[31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 31-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tDAL401\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL402\tLONDRES /GATWICK (LGW), 7-12-2019\tDAL403\tLONDRES /STANSTED (STN), 7-1-2011\tDAL413\tLONDRES /LUTON (LTN)]";
+        expected = "[7-1-2011\tDAL413\tLONDRES /LUTON (LTN), 31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 6-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL401\tLONDRES /HEATHROW (LHR), 7-12-2018\tDAL402\tLONDRES /GATWICK (LGW), 12-12-2018\tAV730\tLONDRES /HEATHROW (LHR), 31-12-2018\tAV770\tPARIS /ORLY (ORY), 7-12-2019\tDAL403\tLONDRES /STANSTED (STN)]";
         assertEquals(expected, iterableToString(output));
 
         output = searchDB.searchByCompanyAndFLightCode(companies.get(2), 0, companies.get(2), Integer.MAX_VALUE);
-        expected = "[31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA)]";
+        expected = "[31-12-2016\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 17-4-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA), 30-6-2018\tAEA340\tPARIS /CHARLES DE GAULLE (CDG), 7-12-2018\tAEA350\tPARIS /BEAUVAIS-TILLE (BVA)]";
         assertEquals(expected, iterableToString(output));
         output = searchDB.searchByCompanyAndFLightCode(companies.get(2), 300, companies.get(2), 350);
         assertEquals(expected, iterableToString(output));
