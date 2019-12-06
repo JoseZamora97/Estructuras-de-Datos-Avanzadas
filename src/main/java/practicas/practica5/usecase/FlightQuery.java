@@ -98,17 +98,19 @@ public class FlightQuery {
             flights.findRange(fMin, fMax);
         }
 
+        fMin.setDate(lDate.getYear(), lDate.getMonthValue(), lDate.getDayOfMonth());
+        fMax.setDate(hDate.getYear(), hDate.getMonthValue(), hDate.getDayOfMonth());
+
         List<Flight> iterable = new LinkedList<>();
-        if(!flights.isEmpty())
-            flights.successors(flights.first()).forEach(flight -> {
-                boolean comp1 = start_company.compareTo(flight.getElement().getCompany()) < 0;
-                boolean comp2 = end_company.compareTo(flight.getElement().getCompany()) >= 0;
-                boolean comp3 = start_company.compareTo(flight.getElement().getCompany()) == 0;
-                boolean comp4 = start_flightCode <= flight.getElement().getFlightCode();
-                boolean comp5 = end_flightCode >= flight.getElement().getFlightCode();
-                if((comp1 && comp2) || (comp3 && comp4 && comp5))
-                    iterable.add(flight.getElement());
-            });
+        flights.findRange(fMin, fMax).forEach(flight -> {
+            boolean comp1 = start_company.compareTo(flight.getElement().getCompany()) < 0;
+            boolean comp2 = end_company.compareTo(flight.getElement().getCompany()) >= 0;
+            boolean comp3 = start_company.compareTo(flight.getElement().getCompany()) == 0;
+            boolean comp4 = start_flightCode <= flight.getElement().getFlightCode();
+            boolean comp5 = end_flightCode >= flight.getElement().getFlightCode();
+            if((comp1 && comp2) ||(comp3 && comp4 && comp5))
+                iterable.add(flight.getElement());
+        });
 
         return iterable;
     }
